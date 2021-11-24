@@ -1,11 +1,12 @@
 import React from 'react';
 import { useState, useContext } from 'react';
-import { Checkbox } from '@mui/material';
-import { StyledTextField } from '../config/defaults';
+import { Button, Checkbox } from '@mui/material';
+import { Row, StyledTextField } from '../config/defaults';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import TwitterService from '../services/twitter';
 
 import { TaskContext, WalletContext } from './context/context';
 
@@ -34,6 +35,8 @@ export const OpenTasks = () => {
   const { tasks } = useContext(TaskContext);
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('');
+  const [username, setUsername] = useState('');
+  const [userId, setUserId] = useState('');
 
   var filtered = tasks;
 
@@ -45,6 +48,26 @@ export const OpenTasks = () => {
 
   return (
     <div>
+      <div>
+        <Row>
+          <StyledTextField
+            label="User handle"
+            value={username}
+            onChange={({ target }) => {
+              setUsername(target.value);
+            }}
+          ></StyledTextField>
+          <Button
+            variant="contained"
+            onClick={() => {
+              const user = TwitterService.getTwitterId({ username });
+              console.log('user', user);
+            }}
+          >
+            Get user Id
+          </Button>
+        </Row>
+      </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
         <div>
           <Checkbox checked={viewAll} onChange={(event) => setViewAll(event.target.checked)} />

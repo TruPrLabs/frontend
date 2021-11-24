@@ -1,9 +1,19 @@
 import axios from 'axios';
-const baseURL = '/api/tweet';
+const baseUrl = '/api/twitter';
 
-const getUserId = ({ username }) => {
-  const request = axios.get(`${baseURL}/${username}`);
-  return request.then((response) => response.data);
+const getTwitterId = async ({ username }) => {
+  try {
+    console.log('Called get');
+    const res = await axios.get(`${baseUrl}/${username}`);
+    console.log('Res', res);
+  } catch {}
+  /*
+  const request = axios.get(`${baseUrl}/${username}`);
+  return request.then((response) => {
+    console.log('Service response', response.data);
+    return response.data;
+  });*/
 };
 
-export default { getUserId };
+// eslint-disable-next-line import/no-anonymous-default-export
+export default { getTwitterId };

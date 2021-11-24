@@ -16,6 +16,7 @@
     "date-fns": "^2.25.0",
     "ethers": "^5.4.7",
     "moralis": "^0.0.134",
+    "needle": "^3.0.0",
     "react": "^17.0.2",
     "react-blockies": "^1.4.1",
     "react-countdown": "^2.3.2",
@@ -51,6 +52,7 @@
       "last 1 safari version"
     ]
   },
+  "proxy": "http://localhost:3001",
   "devDependencies": {
     "dotenv": "^10.0.0"
   }
