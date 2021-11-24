@@ -14,17 +14,21 @@ import {
   TableRow,
   TableCell,
   TextField,
+  Step,
+  StepButton,
+  Typography,
 } from '@mui/material';
 import {
   DStackColumn,
   StyledTextField,
-  StyledTextFieldInfo,
   DDateTimePicker,
   Row,
   LabelWith,
   LabelWithText,
   RowLabel,
+  TransactionButton,
 } from '../config/defaults';
+
 import TruPrContract from '../contracts/TruPr.json';
 import tokenContract from '../contracts/ERC20.json';
 import { useNewMoralisObject, useMoralis, useMoralisQuery } from 'react-moralis';
@@ -39,14 +43,6 @@ import { ethers } from 'ethers';
 import { TokenContext, WalletContext, Web3Context } from './context/context';
 
 import { PLATFORM_TO_ID, DURATION_CHOICES, METRIC_TO_ID } from '../config/config';
-
-import Box from '@mui/material/Box';
-// import Stepper from '@mui/material/Stepper';
-import Step from '@mui/material/Step';
-import StepButton from '@mui/material/StepButton';
-// import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-
 import { isPositiveInt, isValidAddress } from '../config/utils';
 
 const steps = ['Task Details', 'Rewards', 'Finalize'];
@@ -54,7 +50,7 @@ const steps = ['Task Details', 'Rewards', 'Finalize'];
 // ================== Create Task ====================
 
 export const CreateTask = () => {
-  const { isSaving, error, save } = useNewMoralisObject('Task');
+  const { isSaving, save } = useNewMoralisObject('Task');
   const { refetchUserData, setUserData, userError, isUserUpdating, user, isAuthUndefined } = useMoralis();
   const { walletAddress } = useMoralisDapp();
 
@@ -76,11 +72,14 @@ export const CreateTask = () => {
   const [metric, setMetric] = useState('Time');
   const [cliffPeriod, setCliffPeriod] = useState(0);
   const [linearRate, setLinearRate] = useState(true);
-  const [xticks, setXticks] = useState([]);
-  const [yticks, setYticks] = useState([]);
+  // const [xticks, setXticks] = useState([]);
+  // const [yticks, setYticks] = useState([]);
 
   const [touched, setTouched] = useState({});
   const isTouched = (key) => Object.keys(touched).includes(key);
+
+  const [isSendingTxApprove, setIsSendingTxApprove] = useState(false);
+  const [isSendingTxTask, setIsSendingTxTask] = useState(false);
 
   const { tokenWhitelist, tokenApprovals, tokenBalances, updateApprovals } = useContext(TokenContext);
   const { handleTx, handleTxError, signContract, walletProvider } = useContext(WalletContext);
@@ -122,28 +121,39 @@ export const CreateTask = () => {
     return parseInt(depositAmount) <= tokenBalances[tokenSymbol];
   };
 
-  const isValidTask = () => {
-    return stepIsComplete(0) && stepIsComplete(1);
-  };
+  const errorForm0 =
+    (!isPublic && !isValidPromoter() && 'invalid promoter address given') ||
+    (!isPublic && !isPositiveInt(promoterUserId) && 'invalid user id given') ||
+    (!isValidMessage() && 'invalid message given');
 
-  const stepIsComplete = (step) => {
-    return (
-      (step === 0 && (isPublic || (isValidPromoter() && isPositiveInt(promoterUserId))) && isValidMessage()) ||
-      (step === 1 &&
-        // isValidStartDate() &&
-        isValidEndDate() &&
-        isPositiveInt(depositAmount)) ||
-      (step === 2 && stepIsComplete(0) && stepIsComplete(1))
-    );
+  const errorForm1 =
+    (!isValidEndDate() && 'invalid end date given') ||
+    (!isPositiveInt(depositAmount) && 'invalid deposit amount given');
+
+  const formError = (index) => {
+    if (index === 0) return errorForm0;
+    if (index === 1) return errorForm1;
+    if (index === 2) return (errorForm0 && 'step 1: ' + errorForm0) || (errorForm1 && 'step 2: ' + errorForm1);
   };
 
   const approveToken = () => {
     token.contract
       .connect(walletProvider.getSigner())
       .approve(contract.address, ethers.constants.MaxUint256)
+      .then((tx) => {
+        setIsSendingTxApprove(true);
+        return tx;
+      })
       .then(handleTx)
+      .then((tx) => {
+        setIsSendingTxApprove(false);
+        return tx;
+      })
       .then(() => updateApprovals(tokenSymbol))
-      .catch(handleTxError);
+      .catch((e) => {
+        handleTxError(e);
+        setIsSendingTxApprove(false);
+      });
   };
 
   const getTask = () => ({
@@ -177,8 +187,14 @@ export const CreateTask = () => {
         task.yticks,
         task.data
       )
+      .then((tx) => {
+        setIsSendingTxTask(true);
+        return tx;
+      })
       .then(handleTx)
       .then((receipt) => {
+        setIsSendingTxTask(false);
+
         let taskId = receipt.events.at(-1).args.taskId.toString();
 
         console.log('Task id should be:', taskId);
@@ -205,7 +221,11 @@ export const CreateTask = () => {
           yticks: [depositAmount],
         });
       })
-      .catch(handleTxError);
+      .then(() => updateApprovals(tokenSymbol))
+      .catch((e) => {
+        setIsSendingTxTask(false);
+        handleTxError(e);
+      });
   };
 
   const touch = (key) => {
@@ -231,14 +251,16 @@ export const CreateTask = () => {
       <DStackColumn>
         <Stepper nonLinear activeStep={activeStep}>
           {steps.map((label, index) => (
-            <Step key={label} completed={stepIsComplete(index)}>
-              <StepButton color="inherit" onClick={() => handleStep(index)}>
-                <StepLabel
-                  error={index !== activeStep && index !== 2 && isTouched('step' + index) && !stepIsComplete(index)}
-                >
-                  {label}
-                </StepLabel>
-              </StepButton>
+            <Step key={label} completed={!formError(index)}>
+              <Tooltip title={formError(index)} placement="top">
+                <StepButton color="inherit" onClick={() => handleStep(index)}>
+                  <StepLabel
+                    error={index !== activeStep && index !== 2 && isTouched('step' + index) && !!formError(index)}
+                  >
+                    {label}
+                  </StepLabel>
+                </StepButton>
+              </Tooltip>
             </Step>
           ))}
         </Stepper>
@@ -493,17 +515,18 @@ export const CreateTask = () => {
             </TableContainer>
             <Stack>
               {!tokenApprovals[tokenSymbol] && (
-                <Button variant="contained" onClick={approveToken}>
+                <TransactionButton loading={isSendingTxApprove} onClick={approveToken}>
                   Approve Token
-                </Button>
+                </TransactionButton>
               )}
-              <Button
-                disabled={!isValidTask() || !tokenApprovals[tokenSymbol]}
-                variant="contained"
+              <TransactionButton
+                tooltip={formError(2)}
+                loading={isSendingTxTask}
+                disabled={!!formError(2) || !tokenApprovals[tokenSymbol]}
                 onClick={createTask}
               >
                 Create Task
-              </Button>
+              </TransactionButton>
             </Stack>
           </>
         )}
@@ -528,6 +551,8 @@ const mockMintInterface = ['function mint(uint256 amount)', 'function mintFor(ad
 export const DevTools = () => {
   const [tokenSymbol, setTokenSymbol] = useState('MOCK');
 
+  const [isMinting, setIsMinting] = useState(false);
+
   const { tokenWhitelist, tokenBalances, updateBalances } = useContext(TokenContext);
   const { handleTxError, handleTx, walletProvider, isConnected } = useContext(WalletContext);
 
@@ -538,9 +563,19 @@ export const DevTools = () => {
     contract
       .connect(isConnected ? walletProvider.getSigner() : null)
       .mint('1000')
+      .then((tx) => {
+        setIsMinting(true);
+        return tx;
+      })
       .then(handleTx)
+      .then(() => {
+        setIsMinting(false);
+      })
       .then(() => updateBalances(tokenSymbol))
-      .catch(handleTxError);
+      .catch((e) => {
+        handleTxError(e);
+        setIsMinting(false);
+      });
   };
 
   return (
@@ -561,9 +596,9 @@ export const DevTools = () => {
           </MenuItem>
         ))}
       </TextField>
-      <Button variant="contained" onClick={mint}>
+      <TransactionButton loading={isMinting} onClick={mint}>
         Mint 1000
-      </Button>
+      </TransactionButton>
     </DStackColumn>
   );
 };

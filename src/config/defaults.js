@@ -5,6 +5,7 @@ import DateTimePicker from '@mui/lab/DateTimePicker';
 
 import Typography from '@mui/material/Typography';
 import { Box } from '@mui/system';
+import { LoadingButton } from '@mui/lab';
 
 export const LabelWithText = ({ label, text, variant = 'subtle', placement = 'left', tooltip, textStyle = {} }) => {
   return (
@@ -54,15 +55,11 @@ export const LabelWith = ({
 
   var labelElement = label && (
     <div style={{ marginBlock: 'auto', display: 'inline-flex' }}>
-      <Typography inline sx={{ textAlign: 'left', ...labelStyle }}>
-        {label}
-      </Typography>
+      <Typography sx={{ textAlign: 'left', ...labelStyle }}>{label}</Typography>
 
       {tooltip && tooltipPlacement === '?' && (
         <Tooltip title={tooltip} placement="top" style={{ marginInline: '0.5em' }}>
-          <Typography inline sx={{ ...labelStyle, color: '#9e9e9e' }}>
-            ?
-          </Typography>
+          <Typography sx={{ ...labelStyle, color: '#9e9e9e' }}>?</Typography>
         </Tooltip>
       )}
     </div>
@@ -104,6 +101,19 @@ export const LabelWith = ({
   return component;
 };
 
+export const TransactionButton = (props) => {
+  const button = <LoadingButton variant="contained" {...props} style={{ width: '100%', ...props.style }} />;
+
+  if (props.tooltip)
+    return (
+      <Tooltip title={props.tooltip} placement="top">
+        <span>{button}</span>
+      </Tooltip>
+    );
+
+  return button;
+};
+
 const StyledStack = styled(Stack)(({ theme }) => ({
   margin: '1em 0',
   padding: '1em 1em',
@@ -120,8 +130,9 @@ const StyleRow = styled(Stack)(({ theme }) => ({
   // marginLeft: 'auto',
   // marginRight: 'auto',
   textAlign: 'center',
+  width: '100%',
+  // display: 'block',
   display: 'inline-flex',
-  // display: 'inline-fuck',
   justifyContent: 'space-between',
   // margin: 'auto',
 }));
