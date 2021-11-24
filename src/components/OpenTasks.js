@@ -56,12 +56,13 @@ export const OpenTasks = () => {
             onChange={({ target }) => {
               setUsername(target.value);
             }}
-          ></StyledTextField>
+          ></StyledTextField>{' '}
           <Button
             variant="contained"
-            onClick={() => {
-              const user = TwitterService.getTwitterId({ username });
-              console.log('user', user);
+            onClick={async () => {
+              let user = await TwitterService.getId({ username });
+              setUserId(user);
+              console.log(userId);
             }}
           >
             Get user Id
