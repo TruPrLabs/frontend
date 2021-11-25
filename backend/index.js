@@ -1,10 +1,13 @@
 const express = require('express');
 const needle = require('needle');
+const cors = require('cors');
 const { hashCheck, unixToISO, cliffCheck } = require('./helpers');
 
 require('dotenv').config();
 
 const app = express();
+app.use(cors());
+app.use(express.json());
 
 const token = process.env.BEARER_TOKEN;
 
@@ -17,8 +20,7 @@ const getTwitterId = async (req, res) => {
         authorization: `Bearer ${token}`,
       },
     });
-    let id = response.body.data.id;
-    console.log('Id:', id, typeof id);
+
     console.log(response.body.data.id);
     res.send(response.body.data.id);
   } catch (error) {
@@ -27,50 +29,43 @@ const getTwitterId = async (req, res) => {
 };
 
 const getEAResult = async (req, res) => {
-  console.log('Req.params', req.params);
-  const task = req.params.task;
-  console.log(task);
-  /*
-  let params,
-  endpointURL,
-  hashUserId,
-  unixStartDate,
-  unixEndDate,
-  res,
-  failedResult,
-  invalidResult,
-  isPublic,
-  userId;
+  console.log('Res.body', req.body.taskParams);
+  //  res.status(200).send(req.body.taskParams);
+  // return;
+  const task = req.body.taskParams;
 
-  const startTime = task.startDate;
-  const endTime = task.endDate;
-  
+  let params, endpointURL, hashUserId, response, failedResult, invalidResult, isPublic, userId, calldone;
+  const minAccountAge = 2592000;
+  const startTime = unixToISO(task.startDate);
+  const endTime = unixToISO(task.endDate);
+  const taskId = task.taskId;
+  const endpoint = task.endpoint;
+  const tweetHash = task.tweetHash;
+  const metric = task.metric;
+  const cliff = task.cliff;
+  const platform = task.platform;
 
   failedResult = {
     status: 500,
     data: {
-      result: {
-        taskId: taskId,
-        responseStatus: 2, // Error
-        score: 0,
-      },
+      taskId: taskId,
+      responseStatus: 2, // Error
+      score: 0,
     },
   };
 
   invalidResult = {
     status: 200,
     data: {
-      result: {
-        taskId: taskId,
-        responseStatus: 1, // INVALID
-        score: 0,
-      },
+      taskId: taskId,
+      responseStatus: 0, // INVALID
+      score: 0,
     },
   };
 
-  if (endpoint == 'UserTimeline') {
+  if (endpoint === 'UserTimeline') {
     isPublic = false;
-    userId = BigInt(dataObject.promoterId);
+    userId = task.promoterId;
     endpointURL = `https://api.twitter.com/2/users/${userId}/tweets`;
     hashUserId = false;
     params = {
@@ -79,53 +74,48 @@ const getEAResult = async (req, res) => {
       end_time: endTime,
       'tweet.fields': 'public_metrics,created_at',
     };
-  } else if (endpoint == 'Public') {
+  } else if (endpoint === 'Public') {
     isPublic = true;
-    const userAddress = validator.validated.data.userAddress;
-    userId = validator.validated.data.user_id;
-    console.log('User Address:', userAddress, 'User id:', userId);
+    const userAddress = task.walletAddress.toLowerCase();
+    userId = task.userId;
     endpointURL = `https://api.twitter.com/2/users/${userId}`;
     params = {
       'user.fields': 'created_at,public_metrics,description',
     };
 
-    res = await needle("get", endpointURL, params, {
+    response = await needle('get', endpointURL, params, {
       headers: {
         authorization: `Bearer ${token}`,
       },
     });
+    console.log('Response public', response.body);
 
-    const checkAccountAge = cliffCheck(
-      minAccountAge,
-      res.body.data.created_at
-    );
+    const checkAccountAge = cliffCheck(minAccountAge, response.body.data.created_at);
 
-    userId = res.body.data.id;
+    userId = response.body.data.id;
 
-    const bioArray = res.body.data.description
-      .split(" ")
-      .map((i) => i.toLowerCase());
+    const bioArray = response.body.data.description.split(' ').map((i) => i.toLowerCase());
     const accountBool = bioArray.includes(userAddress);
-    console.log("BIO", bioArray);
-    console.log("My account?", accountBool);
+    console.log('BIO', bioArray);
+    console.log('My account?', accountBool);
 
     if (bioArray.includes(userAddress) && checkAccountAge) {
       endpointURL = `https://api.twitter.com/2/users/${userId}/tweets`;
       hashUserId = false;
       params = {
-        exclude: "retweets,replies",
+        exclude: 'retweets,replies',
         start_time: startTime,
         end_time: endTime,
-        "tweet.fields": "public_metrics,created_at",
+        'tweet.fields': 'public_metrics,created_at',
       };
     } else {
       calldone = true;
-      callback(200, Requester.success(jobRunID, failedResult));
+      res.send(failedResult);
       return failedResult;
     }
   } else {
     calldone = true;
-    callback(200, Requester.success(jobRunID, failedResult));
+    res.send(failedResult);
     return failedResult;
   }
 
@@ -135,46 +125,44 @@ const getEAResult = async (req, res) => {
   }
 
   // this is the HTTP header that adds bearer token authentication
-  res = await needle("get", endpointURL, params, {
+  response = await needle('get', endpointURL, params, {
     headers: {
       authorization: `Bearer ${token}`,
     },
   });
 
-  if (res.body) {
-    console.log("Resbody", res.body.data);
-    if (!res.body.data) {
-      callback(200, Requester.success(jobRunID, invalidResult));
+  if (response.body) {
+    console.log('Resbody', response.body.data);
+    if (!response.body.data) {
+      res.send(invalidResult);
       return invalidResult;
     }
 
-    const tweetArr = res.body.data.map((obj) => {
+    const tweetArr = response.body.data.map((obj) => {
       return obj;
     });
-
-    res.body.data.result = hashCheck(
+    console.log('Metric test', metric !== 'Time');
+    response.body.data = hashCheck(
       hashUserId,
       userId,
       tweetHash,
       tweetArr,
       cliff,
-      metric != "Time" ? res.body.data[0].public_metrics[metric] : "Time",
+      metric !== 'Time' ? response.body.data[0].public_metrics[metric] : 'Time',
       taskId,
       isPublic
     );
 
-    res.body.status = 200;
-    callback(200, Requester.success(jobRunID, res.body));
-    return res.body;
-  } else {
-    callback(500, Requester.errored(jobRunID, error));
-  }
+    res.status(200).send(response.body.data);
 
-*/
+    return response.body;
+  } else {
+    res.status(500).send('Error');
+  }
 };
 
 app.get('/api/twitter/:username', getTwitterId);
-app.get('/api/EA', getEAResult);
+app.post('/api/EA/', getEAResult);
 
 const PORT = 3001;
 app.listen(PORT, () => {

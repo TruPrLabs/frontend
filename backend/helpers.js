@@ -2,7 +2,7 @@ const ethers = require('ethers');
 
 const unixToISO = (date) => {
   let unixDate = date;
-  let newDate = new Date(unixDate * 1000);
+  let newDate = new Date(unixDate);
   return newDate.toISOString().split('.')[0] + 'Z';
 };
 
@@ -11,6 +11,7 @@ const cliffCheck = (cliff, createdAt) => {
   const date = new Date(createdAt);
   const unixCreatedAt = Math.floor(date / 1000);
   const timeNow = Math.floor(Date.now() / 1000);
+  console.log('Cliff calc:', unixCreatedAt, timeNow, timeNow - unixCreatedAt);
   if (timeNow - unixCreatedAt >= cliff) {
     return true;
   } else {
@@ -18,12 +19,12 @@ const cliffCheck = (cliff, createdAt) => {
   }
 };
 
-const cliffValue = (cliff, createdAt) => {
+/*const cliffValue = (cliff, createdAt) => {
   const date = new Date(createdAt);
   const unixCreatedAt = Math.floor(date / 1000);
   const timeNow = Math.floor(Date.now() / 1000);
   return timeNow - unixCreatedAt;
-};
+};*/
 
 const hashCheck = (checkUsers, userid, initialHash, tweetArray, cliff, metricData, taskId, isPublic) => {
   let matchingItemFound = false;
@@ -40,8 +41,8 @@ const hashCheck = (checkUsers, userid, initialHash, tweetArray, cliff, metricDat
         matchingItemFound = true;
         if (cliffCheck(cliff, createdAt)) {
           cliffReached = true;
-          if (metricData == 'Time') {
-            metricData = cliffValue(cliff, createdAt);
+          if (metricData === 'Time') {
+            metricData = cliff;
           }
         }
         break;
@@ -65,6 +66,9 @@ const hashCheck = (checkUsers, userid, initialHash, tweetArray, cliff, metricDat
       }
     }
   }
+
+  console.log('Metric data', metricData);
+  console.log('Matching item found?', matchingItemFound);
   if (!isPublic) {
     return {
       taskId: taskId,

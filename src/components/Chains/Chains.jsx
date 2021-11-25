@@ -25,7 +25,7 @@ const styles = {
 };
 
 const menuItems = [
-  {
+  /*{
     key: '0x1',
     value: 'Ethereum',
     icon: <ETHLogo />,
@@ -44,13 +44,13 @@ const menuItems = [
     key: '0x4',
     value: 'Rinkeby Testnet',
     icon: <ETHLogo />,
-  },
+  },*/
   {
     key: '0x2a',
     value: 'Kovan Testnet',
     icon: <ETHLogo />,
   },
-  {
+  /*{
     key: '0x5',
     value: 'Goerli Testnet',
     icon: <ETHLogo />,
@@ -78,6 +78,11 @@ const menuItems = [
   {
     key: '0xa86a',
     value: 'Avalanche',
+    icon: <AvaxLogo />,
+  },*/
+  {
+    key: '0xa869',
+    value: 'Fuji Testnet',
     icon: <AvaxLogo />,
   },
 ];
