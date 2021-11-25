@@ -150,7 +150,7 @@ const StyleRow = styled(Stack)(({ theme }) => ({
   // margin: 'auto',
 }));
 
-export const DStackColumn = (props) => (
+export const Column = (props) => (
   <StyledStack className="glass-solid" sx={{ background: 'white' }} spacing={2} {...props} />
 );
 
@@ -196,6 +196,17 @@ export const StyledTextFieldInfo = (props) => (
 export const DDateTimePicker = ({ error, helperText, ...props }) => (
   <DateTimePicker
     {...props}
-    renderInput={(params) => <StyledTextField {...params} error={error} helperText={helperText} />}
+    renderInput={(params) => (
+      <StyledTextField
+        sx={{
+          marginInline: '1em',
+          marginBlock: 'auto',
+          ...props.sx,
+        }}
+        {...params}
+        error={error}
+        helperText={helperText}
+      />
+    )}
   />
 );

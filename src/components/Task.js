@@ -1,6 +1,6 @@
 import { Fragment, useContext, useState } from 'react';
 import { Button, LinearProgress, Chip, InputAdornment, Paper, Tooltip } from '@mui/material';
-import { DStackColumn, Row, RowLabel, LabelWith, StyledTextField, TransactionButton } from '../config/defaults';
+import { Column, Row, RowLabel, LabelWith, StyledTextField, TransactionButton } from '../config/defaults';
 import { Link, useParams } from 'react-router-dom';
 
 import { LabelWithText } from '../config/defaults';
@@ -72,7 +72,7 @@ export const Task = ({ task, taskId, detailed }) => {
   const taskState = getTaskState(task);
 
   return (
-    <DStackColumn style={{ position: 'relative' }}>
+    <Column style={{ position: 'relative' }}>
       <Row>
         <Row>
           <LabelWithText
@@ -153,6 +153,6 @@ export const Task = ({ task, taskId, detailed }) => {
           </TransactionButton>
         </Fragment>
       )}
-    </DStackColumn>
+    </Column>
   );
 };

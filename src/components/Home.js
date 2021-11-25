@@ -27,7 +27,8 @@ import Box from '@mui/material/Box';
 import { ReactComponent as TruPrLogo } from '../images/trupr.svg';
 import { DisplayTask } from './Task';
 
-const logoHeight = 24;
+const logoHeight = 20;
+const logoSpacing = 0;
 
 const Socials = () => (
   <div className="socials">
@@ -36,7 +37,7 @@ const Socials = () => (
       href="https://github.com/TruPrLabs/"
       target="_blank"
       rel="noreferrer"
-      style={{ minWidth: 60 }}
+      style={{ minWidth: 20, marginInline: logoSpacing }}
     >
       <GithubLogo style={{ height: logoHeight, width: 'auto' }} />
     </Button>
@@ -45,7 +46,7 @@ const Socials = () => (
       href="https://twitter.com/TruPrLabs"
       target="_blank"
       rel="noreferrer"
-      style={{ minWidth: 60 }}
+      style={{ minWidth: 20, marginInline: logoSpacing }}
     >
       <TwitterLogo style={{ height: logoHeight, width: 'auto' }} />
     </Button>
@@ -54,7 +55,7 @@ const Socials = () => (
       href="https://discord.gg/QeCXAGQJYG"
       target="_blank"
       rel="noreferrer"
-      style={{ minWidth: 60 }}
+      style={{ minWidth: 20, marginInline: logoSpacing }}
     >
       <DiscordLogo style={{ height: logoHeight, width: 'auto' }} />
     </Button>

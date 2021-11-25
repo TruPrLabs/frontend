@@ -19,7 +19,7 @@ import {
   Typography,
 } from '@mui/material';
 import {
-  DStackColumn,
+  Column,
   StyledTextField,
   DDateTimePicker,
   Row,
@@ -272,7 +272,7 @@ export const CreateTask = () => {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Confetti numberOfPieces={200} run={confettiRunning} recycle={confetti} gravity={0.1} />
-      <DStackColumn>
+      <Column>
         <Stepper nonLinear activeStep={activeStep}>
           {steps.map((label, index) => (
             <Step key={label} completed={!formError(index)}>
@@ -605,7 +605,7 @@ export const CreateTask = () => {
             NEXT
           </Button>
         </Row>
-      </DStackColumn>
+      </Column>
       <DevTools />
     </LocalizationProvider>
   );
@@ -663,7 +663,7 @@ export const DevTools = () => {
   };
 
   return (
-    <DStackColumn>
+    <Column>
       <h2>Dev Tools</h2>
       <TextField
         select
@@ -683,6 +683,6 @@ export const DevTools = () => {
       <TransactionButton loading={isMinting} onClick={mint}>
         Mint 1000
       </TransactionButton>
-    </DStackColumn>
+    </Column>
   );
 };

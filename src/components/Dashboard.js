@@ -1,13 +1,9 @@
 import React, { Fragment } from 'react';
 import { useMemo, useState, useContext } from 'react';
 import { Button, InputAdornment } from '@mui/material';
-import { DStackColumn, StyledTextFieldInfo, LabelWithText, LabelWith } from '../config/defaults';
+import { Column, StyledTextFieldInfo, LabelWithText, LabelWith, Row } from '../config/defaults';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import Divider from '@mui/material/Divider';
-import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 
 import { ethers } from 'ethers';
@@ -39,26 +35,33 @@ export const DashBoard = () => {
   const myOpenTasks = myTasks.filter((task) => getTaskState(task) === 'Open');
   const myClosedTasks = myTasks.filter((task) => getTaskState(task) !== 'Open');
 
+  const noTasksFound = (
+    <Row>
+      <Typography>No tasks yet.. Head over to </Typography>
+      <Button variant="text" component={Link} to={'/open-tasks'} style={{ minWidth: 60 }}>
+        Open Tasks
+      </Button>
+      .
+    </Row>
+  );
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6} lg={4}>
-          <DStackColumn>
-            <h2>My Open Tasks</h2>
-            {myOpenTasks.length ? (
-              <TaskList tasks={myTasks} />
-            ) : (
-              <Typography>No tasks yet.. Head over to open tasks.</Typography>
-            )}
-          </DStackColumn>
-          <DStackColumn>
+          <Column>
+            <h2>My Tasks</h2>
+            <LabelWith label="Open Tasks" placement="top" variant="standard">
+              {myOpenTasks.length ? <TaskList tasks={myTasks} /> : noTasksFound}
+            </LabelWith>
+            <LabelWith label="Closed Tasks" placement="top" variant="standard">
+              {myClosedTasks.length ? <TaskList tasks={myClosedTasks} /> : noTasksFound}
+            </LabelWith>
+          </Column>
+          <Column>
             <h2>My Closed Tasks</h2>
-            {myClosedTasks.length ? (
-              <TaskList tasks={myClosedTasks} />
-            ) : (
-              <Typography>No tasks yet.. Head over to open tasks.</Typography>
-            )}
-          </DStackColumn>
+            {myClosedTasks.length ? <TaskList tasks={myClosedTasks} /> : noTasksFound}
+          </Column>
         </Grid>
       </Grid>
     </Box>
@@ -87,7 +90,7 @@ export const ContractVitals = () => {
 
   return (
     <Grid item xs={12} md={6} lg={4}>
-      <DStackColumn>
+      <Column>
         <h2>Contract Infos</h2>
         <StyledTextFieldInfo label="Address" value={contract?.address} />
         <StyledTextFieldInfo label="Owner" value={contractOwner} />
@@ -99,7 +102,7 @@ export const ContractVitals = () => {
           }}
         />
         <StyledTextFieldInfo label="Task Count" value={taskCount} />
-      </DStackColumn>
+      </Column>
     </Grid>
   );
 };
