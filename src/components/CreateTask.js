@@ -28,6 +28,7 @@ import {
   RowLabel,
   TransactionButton,
 } from '../config/defaults';
+import { Link } from 'react-router-dom';
 
 import useWindowDimensions from '../hooks/useWindowDimensions';
 import Confetti from 'react-confetti';
@@ -42,7 +43,7 @@ import { ethers } from 'ethers';
 import { TokenContext, WalletContext, Web3Context } from './context/context';
 
 import { PLATFORM_TO_ID, DURATION_CHOICES, METRIC_TO_ID } from '../config/config';
-import { isPositiveInt, isValidAddress } from '../config/utils';
+import { isPositiveInt, isValidAddress, formatDuration } from '../config/utils';
 
 const steps = ['Task Details', 'Rewards', 'Finalize'];
 
@@ -62,13 +63,14 @@ export const CreateTask = () => {
   const [isPublic, setIsPublic] = useState(false);
   const [message, setMessage] = useState('');
   const [description, setDescription] = useState('');
-  const [name, setName] = useState('');
+  const [title, setTitle] = useState('');
 
   const [tokenSymbol, setTokenSymbol] = useState('MOCK');
   const [depositAmount, setDepositAmount] = useState('');
   const [startDate, setStartDate] = useState(new Date().getTime());
   const [endDate, setEndDate] = useState(new Date().getTime() + DURATION_CHOICES['One Week']);
   const [metric, setMetric] = useState('Time');
+  const [milestone, setMilestone] = useState('');
   const [cliffPeriod, setCliffPeriod] = useState(0);
   const [linearRate, setLinearRate] = useState(true);
   // const [xticks, setXticks] = useState([]);
@@ -79,6 +81,7 @@ export const CreateTask = () => {
 
   const [isSendingTxApprove, setIsSendingTxApprove] = useState(false);
   const [isSendingTxTask, setIsSendingTxTask] = useState(false);
+  const [createdTaskId, setCreatedTaskId] = useState(-1);
 
   const [confetti, setConfetti] = useState(false);
   const [confettiRunning, setConfettiRunning] = useState(false);
@@ -87,7 +90,7 @@ export const CreateTask = () => {
   const { handleTx, handleTxError, signContract, walletProvider } = useContext(WalletContext);
   const { contract } = useContext(Web3Context);
 
-  const { width, height } = useWindowDimensions();
+  // const { width, height } = useWindowDimensions();
 
   // const handleTx = handleTxWrapper(() => {});
   const token = tokenWhitelist[tokenSymbol];
@@ -123,22 +126,25 @@ export const CreateTask = () => {
   };
 
   const isValidDepositAmount = () => {
-    return parseInt(depositAmount) <= tokenBalances[tokenSymbol];
+    return isPositiveInt(depositAmount) && parseInt(depositAmount) <= tokenBalances[tokenSymbol];
   };
 
-  const errorForm0 =
+  const errorForm1 =
     (!isPublic && !isValidPromoter() && 'Invalid promoter address given') ||
     (!isPublic && !isPositiveInt(promoterUserId) && 'Invalid user id given') ||
-    (!isValidMessage() && 'Invalid message given');
+    (!isValidMessage() && 'Invalid message given') ||
+    '';
 
-  const errorForm1 =
+  const errorForm2 =
     (!isValidEndDate() && 'Invalid end date given') ||
-    (!isPositiveInt(depositAmount) && 'Invalid deposit amount given');
+    (!isValidDepositAmount() && 'Invalid deposit amount given') ||
+    (!isPositiveInt(milestone) && 'Invalid milestone given') ||
+    '';
 
   const formError = (index) => {
-    if (index === 0) return errorForm0;
-    if (index === 1) return errorForm1;
-    if (index === 2) return (errorForm0 && 'Step 1: ' + errorForm0) || (errorForm1 && 'step 2: ' + errorForm1);
+    if (index === 0) return errorForm1;
+    if (index === 1) return errorForm2;
+    if (index === 2) return (errorForm1 && 'Step 1: ' + errorForm1) || (errorForm2 && 'Step 2: ' + errorForm2) || '';
   };
 
   const approveToken = () => {
@@ -165,13 +171,28 @@ export const CreateTask = () => {
     promoter: isPublic ? ethers.constants.AddressZero : promoter,
     tokenAddress: token.address,
     depositAmount: depositAmount,
-    startDate: parseInt(startDate.toString() / 1000),
-    endDate: parseInt(endDate.toString() / 1000),
-    cliffPeriod: parseInt(cliffPeriod.toString() / 1000),
-    linearRate: linearRate,
-    xticks: [100],
+    startDate: parseInt(startDate.toString() / 1000).toString(),
+    endDate: parseInt(endDate.toString() / 1000).toString(),
+    cliffPeriod: parseInt(cliffPeriod.toString() / 1000).toString(),
+    linearRate: linearRate.toString(),
+    xticks: [milestone],
     yticks: [depositAmount],
     data: data,
+  });
+
+  const getTaskReadable = () => ({
+    Title: title || '[No title given]',
+    Description: description || '[No description given]',
+    Platform: platform,
+    Assignee: isPublic ? 'Public task (available to anyone)' : promoter,
+    ...(!isPublic && { 'Assignee user id': promoterUserId }),
+    'Start date': new Date(startDate),
+    'End date': new Date(endDate),
+    Milestone: milestone + ' ' + metric,
+    Reward: depositAmount + ' ' + token.symbol,
+    'Linear payout': linearRate,
+    'Cliff period': cliffPeriod ? formatDuration(cliffPeriod) : 'None',
+    'Promotion message': message,
   });
 
   const createTask = () => {
@@ -202,30 +223,18 @@ export const CreateTask = () => {
         startParty();
 
         let taskId = receipt.events.at(-1).args.taskId.toString();
+        setCreatedTaskId(taskId);
 
-        console.log('Task id should be:', taskId);
-
-        save({
+        const moralisDBTask = {
+          ...task,
           taskId: taskId,
-          status: 1,
-          name: name,
-          message: message,
-          description: isPublic ? `Promotion content: \n${message}\nDescription: \n${description}` : description,
+          title: title,
+          description: description,
           type: isPublic ? 'Public' : 'Personal',
-          platform: platform,
-          sponsor: user,
-          sponsorAddress: user.attributes.ethAddress,
-          promoterId: promoterUserId,
-          promoterAddress: promoter,
-          token: token.address,
-          depositAmount: depositAmount,
-          startDate: startDate,
-          endDate: endDate,
-          cliff: cliffPeriod,
-          linearRate: linearRate,
-          xticks: [100],
-          yticks: [depositAmount],
-        });
+          user: user,
+        };
+
+        save(moralisDBTask);
       })
       .then(() => updateApprovals(tokenSymbol))
       .catch((e) => {
@@ -284,9 +293,9 @@ export const CreateTask = () => {
             <RowLabel label="Enter the title of your promotion.">
               <StyledTextField
                 label="Title"
-                value={name}
+                value={title}
                 onChange={({ target }) => {
-                  setName(target.value);
+                  setTitle(target.value);
                 }}
               />
             </RowLabel>
@@ -499,6 +508,22 @@ export const CreateTask = () => {
               </LabelWith>
             </RowLabel>
             <RowLabel
+              label="Enter the milestone the promoter must reach."
+              tooltip="If this is set to `100` and the metric is `likes`, the promoter will receive their payout upon reaching this milestone."
+            >
+              <StyledTextField
+                label="Milestone"
+                // style={{ width: 130, marginRight: '1em' }}
+                value={milestone}
+                error={isTouched('milestone') && !isPositiveInt(milestone)}
+                helperText={isTouched('milestone') && !isPositiveInt(milestone) && 'Must be positive integer'}
+                onChange={({ target }) => {
+                  touch('milestone');
+                  setMilestone(target.value);
+                }}
+              />
+            </RowLabel>
+            <RowLabel
               label="Should there be a cliff-period?"
               tooltip="The cliff-priod determines a delay in the payout. The fulfillment of the task must have passed the cliff-period before the promoter is able to be paid out."
             >
@@ -521,10 +546,26 @@ export const CreateTask = () => {
         )}
         {activeStep == 2 && (
           <>
+            {/* <TableContainer>
+              <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableCell><LabelWithText label="Title" text={title}/></TableCell>
+                    <TableCell><LabelWithText label="Description" text={title}/></TableCell>
+                    <TableCell><LabelWithText label="Title" text={title}/></TableCell>
+                    <TableCell><LabelWithText label="Title" text={title}/></TableCell>
+                    <TableCell><LabelWithText label="Title" text={title}/></TableCell>
+                    <TableCell><LabelWithText label="Title" text={title}/></TableCell>
+                    <TableCell><LabelWithText label="Title" text={title}/></TableCell>
+                    <TableCell><LabelWithText label="Title" text={title}/></TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer> */}
             <TableContainer>
               <Table>
                 <TableBody>
-                  {Object.entries(getTask()).map(([key, value]) => (
+                  {Object.entries(getTaskReadable()).map(([key, value]) => (
                     <TableRow key={key}>
                       <TableCell>{key}</TableCell>
                       <TableCell>{value.toString()}</TableCell>
@@ -539,14 +580,20 @@ export const CreateTask = () => {
                   Approve Token
                 </TransactionButton>
               )}
-              <TransactionButton
-                tooltip={formError(2)}
-                loading={isSendingTxTask}
-                disabled={!!formError(2) || !tokenApprovals[tokenSymbol]}
-                onClick={createTask}
-              >
-                Create Task
-              </TransactionButton>
+              {createdTaskId >= 0 ? (
+                <Button component={Link} to={'/task/' + createdTaskId}>
+                  View Task
+                </Button>
+              ) : (
+                <TransactionButton
+                  tooltip={formError(2)}
+                  loading={isSendingTxTask}
+                  disabled={!!formError(2) || !tokenApprovals[tokenSymbol]}
+                  onClick={createTask}
+                >
+                  Create Task
+                </TransactionButton>
+              )}
             </Stack>
           </>
         )}
@@ -563,6 +610,23 @@ export const CreateTask = () => {
     </LocalizationProvider>
   );
 };
+
+// const FinalForm = (task) => {
+//   return
+//             <TableContainer>
+//               <Table>
+//                 <TableBody>
+//                   {Object.entries(task).map(([key, value]) => (
+//                     <TableRow key={key}>
+//                       <TableCell>{key}</TableCell>
+//                       <TableCell>{value.toString()}</TableCell>
+//                     </TableRow>
+//                   ))}
+//                 </TableBody>
+//               </Table>
+//             </TableContainer>
+
+// }
 
 // ================== Dev Tools ====================
 

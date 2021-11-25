@@ -31,21 +31,21 @@ export const Task = ({ task, taskId, detailed }) => {
   const { tokenWhitelistAddressToSymbol } = useContext(TokenContext);
   const { updateTasks } = useContext(TaskContext);
 
-  let description, name;
+  let description, title;
   //const { walletAddress } = useMoralisDapp();
 
   const { data } = useMoralisQuery('Task', (query) =>
-    query.exists('taskId').equalTo('taskId', taskId.toString()).select('description', 'name', 'taskId', 'user')
+    query.exists('taskId').equalTo('taskId', taskId.toString()).select('description', 'title', 'taskId', 'user')
   );
 
   if (data[0]) {
     const parsedData = JSON.parse(JSON.stringify(data[0]));
     description = parsedData.description;
-    name = parsedData.name;
+    title = parsedData.title;
     // console.log('user name', parsedData.user?.name);
   } else {
     description = 'No description found';
-    name = `Task ${taskId}`;
+    title = `Task ${taskId}`;
   }
 
   const isPublic = task.promoter == 0;
