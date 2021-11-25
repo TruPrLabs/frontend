@@ -43,7 +43,7 @@ export const OpenTasks = () => {
     let testing = await EAService.getResult(tasks[9], walletAddress, '1395461422121984004');
     console.log('Test:', testing);
   };
-  testFunction();
+  //testFunction();
   var filtered = tasks;
 
   if (filtered?.length) {

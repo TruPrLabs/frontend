@@ -6,6 +6,7 @@ const ID_TO_CHAINNAME_SHORT = {
   137: 'polygon',
   56: 'binance',
   43114: 'avax',
+  43113: 'fuji',
 };
 
 // using ethers.providers.getNetwork(chainId).name for now
@@ -17,6 +18,7 @@ const ID_TO_CHAINNAME_LONG = {
   137: 'Polygon Network',
   56: 'Binance Smartchain',
   43114: 'Avalanche Network',
+  43113: 'Avalanche Fuji Testnet',
 };
 
 const blockExplorerURLs = {
@@ -25,6 +27,7 @@ const blockExplorerURLs = {
   4: 'https://rinkeby.etherscan.io/tx/',
   42: 'https://kovan.etherscan.io/tx/',
   137: 'https://polygonscan.com/tx/',
+  43113: 'https://testnet.snowtrace.io/tx/',
 };
 
 export const getChainName = (chain) => ID_TO_CHAINNAME_SHORT[chain];
