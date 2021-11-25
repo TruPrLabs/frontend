@@ -227,6 +227,7 @@ export const CreateTask = () => {
 
         const moralisDBTask = {
           ...task,
+          taskId: taskId,
           title: title,
           description: description,
           type: isPublic ? 'Public' : 'Personal',
