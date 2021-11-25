@@ -15,6 +15,7 @@ import Moralis from 'moralis';
 
 import { TokenContext, TaskContext, WalletContext } from './context/context';
 import { isPositiveInt, isValidAddress, shortenAddress, clamp, getTaskState, taskTimeDeltaInfo } from '../config/utils';
+import { useMoralisDapp } from '../providers/MoralisDappProvider/MoralisDappProvider';
 
 import { getIcon, getProgressValue, dateDiffInDays, getReadableDate } from '../config/utils';
 import { Box } from '@mui/system';
