@@ -38,17 +38,20 @@ export const RowLabel = (props) => (
 export const LabelWith = ({
   label,
   children,
-  variant = 'subtle',
+  variant = 'subtle-small',
   tooltip,
   tooltipPlacement = 'label',
   placement = 'left',
   style = {},
   labelStyle = {},
-  classes,
 }) => {
-  if (variant === 'subtle') labelStyle = { ...labelStyle, color: 'subtle', fontSize: '14px' };
+  if (variant === 'subtle') labelStyle = { ...labelStyle, color: 'subtle' };
+  if (variant === 'subtle-small') labelStyle = { ...labelStyle, color: 'subtle', fontSize: '14px' };
   if (placement === 'right') labelStyle.paddingLeft = '0.5em';
   if (placement === 'left') labelStyle.paddingRight = '0.5em';
+
+  var labelDivStyle = { marginBlock: 'auto', display: 'inline-flex', cursor: 'default' };
+  if (placement === 'top') labelDivStyle.width = '100%';
 
   var componentStyle = {
     marginBlock: 'auto',
@@ -62,7 +65,7 @@ export const LabelWith = ({
     componentStyle = { ...componentStyle, display: 'inline-flex', justifyContent: 'space-between' };
 
   var labelElement = label && (
-    <div style={{ marginBlock: 'auto', display: 'inline-flex', cursor: 'default' }}>
+    <div style={labelDivStyle}>
       <Typography sx={{ textAlign: 'left', ...labelStyle }}>{label}</Typography>
 
       {tooltip && tooltipPlacement === '?' && (
@@ -110,7 +113,9 @@ export const LabelWith = ({
 };
 
 export const TransactionButton = (props) => {
-  const button = <LoadingButton variant="contained" {...props} style={{ width: '100%', ...props.style }} />;
+  const button = (
+    <LoadingButton variant="contained" {...props} tooltip={undefined} style={{ width: '100%', ...props.style }} />
+  );
 
   if (props.tooltip)
     return (
@@ -155,11 +160,11 @@ export const StyledTextField = (props) => (
   <TextField
     variant="outlined"
     {...props}
-    style={{
+    sx={{
       width: '250px',
       height: '3.4em',
       marginBlock: '0.5em',
-      ...props.style,
+      ...props.sx,
     }}
   />
 );

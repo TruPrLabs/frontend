@@ -122,18 +122,18 @@ export const CreateTask = () => {
   };
 
   const errorForm0 =
-    (!isPublic && !isValidPromoter() && 'invalid promoter address given') ||
-    (!isPublic && !isPositiveInt(promoterUserId) && 'invalid user id given') ||
-    (!isValidMessage() && 'invalid message given');
+    (!isPublic && !isValidPromoter() && 'Invalid promoter address given') ||
+    (!isPublic && !isPositiveInt(promoterUserId) && 'Invalid user id given') ||
+    (!isValidMessage() && 'Invalid message given');
 
   const errorForm1 =
-    (!isValidEndDate() && 'invalid end date given') ||
-    (!isPositiveInt(depositAmount) && 'invalid deposit amount given');
+    (!isValidEndDate() && 'Invalid end date given') ||
+    (!isPositiveInt(depositAmount) && 'Invalid deposit amount given');
 
   const formError = (index) => {
     if (index === 0) return errorForm0;
     if (index === 1) return errorForm1;
-    if (index === 2) return (errorForm0 && 'step 1: ' + errorForm0) || (errorForm1 && 'step 2: ' + errorForm1);
+    if (index === 2) return (errorForm0 && 'Step 1: ' + errorForm0) || (errorForm1 && 'step 2: ' + errorForm1);
   };
 
   const approveToken = () => {
@@ -266,30 +266,9 @@ export const CreateTask = () => {
         </Stepper>
         {activeStep == 0 && (
           <>
-            <Row>
-              <RowLabel
-                label="Choose the platform."
-                tooltip="This is the platform the promoter will use to complete the task on"
-              >
-                <StyledTextField
-                  select
-                  label="Platform"
-                  value={platform}
-                  onChange={({ target }) => {
-                    setPlatform(target.value);
-                  }}
-                >
-                  {Object.entries(PLATFORM_TO_ID).map(([platformName, platformId]) => (
-                    <MenuItem key={platformId} value={platformId}>
-                      {platformName}
-                    </MenuItem>
-                  ))}
-                </StyledTextField>
-              </RowLabel>
-            </Row>
-            <RowLabel label="Enter the name of your promotion" tooltip=" ">
+            <RowLabel label="Enter the title of your promotion.">
               <StyledTextField
-                label="Name"
+                label="Title"
                 value={name}
                 onChange={({ target }) => {
                   setName(target.value);
@@ -297,17 +276,42 @@ export const CreateTask = () => {
               />
             </RowLabel>
             <RowLabel
-              label="Enter your promotion description"
+              label="Enter your promotion description."
               tooltip="You can describe who you are, what your goals are, what target group you're aiming for etc."
+              placement="top"
             >
               <StyledTextField
-                label="Name"
+                multiline
+                style={{ width: '100%', paddingBlock: '0.5em' }}
+                label="Description"
                 value={description}
                 onChange={({ target }) => {
                   setDescription(target.value);
                 }}
               />
             </RowLabel>
+            {/* </Row> */}
+            {/* <Row> */}
+            <RowLabel
+              label="Choose the platform."
+              tooltip="This is the platform the promoter will use to complete the task on."
+            >
+              <StyledTextField
+                select
+                label="Platform"
+                value={platform}
+                onChange={({ target }) => {
+                  setPlatform(target.value);
+                }}
+              >
+                {Object.entries(PLATFORM_TO_ID).map(([platformName, platformId]) => (
+                  <MenuItem key={platformId} value={platformId}>
+                    {platformName}
+                  </MenuItem>
+                ))}
+              </StyledTextField>
+            </RowLabel>
+            {/* </Row> */}
             <RowLabel
               label="Will this be a public or a personalised task?"
               tooltip="Having a personalised task means that only a specific user can fulfill this task. Public means that anyone can fulfill the task and claim the rewards."
@@ -323,6 +327,7 @@ export const CreateTask = () => {
               <RowLabel
                 label="Enter the promoter's wallet address."
                 tooltip="This is the address that will receive the tokens after the task has been fulfilled"
+                variant={isPublic ? 'subtle' : 'standard'}
               >
                 <StyledTextField
                   label="Promoter Address"
@@ -344,10 +349,10 @@ export const CreateTask = () => {
               </RowLabel>
             </div>
             <RowLabel
-              // style={{ color: 'red' }}
               disabled={isPublic}
               label={`Enter the promoter's ${platform} user id.`}
               tooltip="This is the user id of the promoter's account on the specified social network platform"
+              variant={isPublic ? 'subtle' : 'standard'}
             >
               <StyledTextField
                 label="Promoter User Id"
@@ -421,7 +426,7 @@ export const CreateTask = () => {
               <div style={{ display: 'inline-flex' }}>
                 <StyledTextField
                   label="Amount"
-                  style={{ width: 130, marginRight: '0em' }}
+                  style={{ width: 130, marginRight: '1em' }}
                   value={depositAmount}
                   error={isTouched('depositAmount') && (!isPositiveInt(depositAmount) || !isValidDepositAmount())}
                   helperText={
