@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { useMemo, useState, useContext } from 'react';
-import { InputAdornment } from '@mui/material';
-import { DStackColumn, StyledTextFieldInfo, LabelWithText } from '../config/defaults';
+import { Button, InputAdornment } from '@mui/material';
+import { DStackColumn, StyledTextFieldInfo, LabelWithText, LabelWith } from '../config/defaults';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
@@ -18,7 +18,20 @@ import { Link } from 'react-router-dom';
 
 // ================== Contract Infos ====================
 
-const MyTasks = () => {
+const TaskList = ({ tasks }) => (
+  <Box sx={{ width: '100%', bgcolor: 'paper', overflow: 'auto', maxHeight: 300 }}>
+    {/* <Divider variant="inset" /> */}
+    {tasks.map((task) => (
+      <LabelWith key={task.id} label={taskTimeDeltaInfo(task)} placement="right">
+        <Button variant="text" component={Link} to={'/task/' + task.id} style={{ minWidth: 60 }}>
+          {'Task ' + task.id}
+        </Button>
+      </LabelWith>
+    ))}
+  </Box>
+);
+
+export const DashBoard = () => {
   const { tasks } = useContext(TaskContext);
   const { walletAddress } = useContext(WalletContext);
 
@@ -26,48 +39,27 @@ const MyTasks = () => {
   const myOpenTasks = myTasks.filter((task) => getTaskState(task) === 'Open');
   const myClosedTasks = myTasks.filter((task) => getTaskState(task) !== 'Open');
 
-  const TaskList = ({ tasks }) => (
-    <List sx={{ width: '100%', bgcolor: 'paper', overflow: 'auto', maxHeight: 300 }}>
-      <Divider variant="inset" component="li" />
-      {tasks.map((task) => (
-        <li key={task.id}>
-          <Link to={'/task/' + task.id}>
-            <LabelWithText text={'Task ' + task.id} label={taskTimeDeltaInfo(task)} placement="right" />
-          </Link>
-          <Divider variant="inset" component="li" />
-        </li>
-      ))}
-    </List>
-  );
-
-  return (
-    <Grid item xs={12} md={6} lg={4}>
-      <DStackColumn>
-        <h2>My Open Tasks</h2>
-        {myOpenTasks.length ? (
-          <TaskList tasks={myTasks} />
-        ) : (
-          <Typography>No tasks yet.. Head over to open tasks.</Typography>
-        )}
-        {/* {myOpenTasks} */}
-      </DStackColumn>
-      <DStackColumn>
-        <h2>My Closed Tasks</h2>
-        {myClosedTasks.length ? (
-          <TaskList tasks={myClosedTasks} />
-        ) : (
-          <Typography>No tasks yet.. Head over to open tasks.</Typography>
-        )}
-      </DStackColumn>
-    </Grid>
-  );
-};
-
-export const DashBoard = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
-        <MyTasks />
+        <Grid item xs={12} md={6} lg={4}>
+          <DStackColumn>
+            <h2>My Open Tasks</h2>
+            {myOpenTasks.length ? (
+              <TaskList tasks={myTasks} />
+            ) : (
+              <Typography>No tasks yet.. Head over to open tasks.</Typography>
+            )}
+          </DStackColumn>
+          <DStackColumn>
+            <h2>My Closed Tasks</h2>
+            {myClosedTasks.length ? (
+              <TaskList tasks={myClosedTasks} />
+            ) : (
+              <Typography>No tasks yet.. Head over to open tasks.</Typography>
+            )}
+          </DStackColumn>
+        </Grid>
       </Grid>
     </Box>
   );

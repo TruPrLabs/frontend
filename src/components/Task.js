@@ -125,27 +125,29 @@ export const Task = ({ task, taskId, detailed }) => {
 
       {detailed && (
         <Fragment>
-          <Row>
-            <RowLabel
-              variant="standard"
-              style={{ justifyContenet: 'left' }}
-              label="Enter your Twitter user id"
-              tooltip="This is the user id of the Twitter account you made the Tweet with."
-              tooltipPlacement="?"
-              placement="left"
-            >
-              <StyledTextField
-                label="Twitter User Id"
-                value={userId}
-                error={userIdTouched && !isPositiveInt(userId)}
-                helperText={userIdTouched && !isPositiveInt(userId) && 'Enter a valid user id'}
-                onChange={({ target }) => {
-                  setUserIdTouched(true);
-                  setUserId(target.value);
-                }}
-              />
-            </RowLabel>
-          </Row>
+          {isPublic && (
+            <Row>
+              <RowLabel
+                variant="standard"
+                style={{ justifyContenet: 'left' }}
+                label="Enter your Twitter user id"
+                tooltip="This is the user id of the Twitter account you made the Tweet with."
+                tooltipPlacement="?"
+                placement="left"
+              >
+                <StyledTextField
+                  label="Twitter User Id"
+                  value={userId}
+                  error={userIdTouched && !isPositiveInt(userId)}
+                  helperText={userIdTouched && !isPositiveInt(userId) && 'Enter a valid user id'}
+                  onChange={({ target }) => {
+                    setUserIdTouched(true);
+                    setUserId(target.value);
+                  }}
+                />
+              </RowLabel>
+            </Row>
+          )}
           <TransactionButton tooltip={error} onClick={() => fulfillTask(taskId)} disabled={!canFulfillTask}>
             Fulfill Task
           </TransactionButton>
