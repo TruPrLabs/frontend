@@ -135,7 +135,7 @@ export const WalletConnector = ({ children }) => {
         setChainId(chainId.toString());
       });
     }
-  }, [setChainId]);
+  }, []);
 
   useEffect(() => {
     if (provider) {
