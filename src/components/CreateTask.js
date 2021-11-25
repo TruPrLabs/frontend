@@ -29,10 +29,9 @@ import {
   TransactionButton,
 } from '../config/defaults';
 
-import TruPrContract from '../contracts/TruPr.json';
-import tokenContract from '../contracts/ERC20.json';
+import useWindowDimensions from '../hooks/useWindowDimensions';
+import Confetti from 'react-confetti';
 import { useNewMoralisObject, useMoralis, useMoralisQuery } from 'react-moralis';
-import Moralis from 'moralis';
 import { useMoralisDapp } from '../providers/MoralisDappProvider/MoralisDappProvider';
 
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
@@ -81,9 +80,14 @@ export const CreateTask = () => {
   const [isSendingTxApprove, setIsSendingTxApprove] = useState(false);
   const [isSendingTxTask, setIsSendingTxTask] = useState(false);
 
+  const [confetti, setConfetti] = useState(false);
+  const [confettiRunning, setConfettiRunning] = useState(false);
+
   const { tokenWhitelist, tokenApprovals, tokenBalances, updateApprovals } = useContext(TokenContext);
   const { handleTx, handleTxError, signContract, walletProvider } = useContext(WalletContext);
   const { contract } = useContext(Web3Context);
+
+  const { width, height } = useWindowDimensions();
 
   // const handleTx = handleTxWrapper(() => {});
   const token = tokenWhitelist[tokenSymbol];
@@ -194,6 +198,7 @@ export const CreateTask = () => {
       .then(handleTx)
       .then((receipt) => {
         setIsSendingTxTask(false);
+        startParty();
 
         let taskId = receipt.events.at(-1).args.taskId.toString();
 
@@ -246,8 +251,17 @@ export const CreateTask = () => {
     handleStep(activeStep - 1);
   };
 
+  const startParty = () => {
+    setConfetti(true);
+    setConfettiRunning(true);
+    setTimeout(() => setConfetti(false), 800);
+  };
+
+  window.startParty = startParty;
+
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <Confetti numberOfPieces={200} run={confettiRunning} recycle={confetti} gravity={0.1} />
       <DStackColumn>
         <Stepper nonLinear activeStep={activeStep}>
           {steps.map((label, index) => (
