@@ -10,9 +10,9 @@ export const contractABI = require('../contracts/TruPr.json').abi;
 // export const VALID_CHAIN_IDS = ['42', '4'];
 export const VALID_CHAIN_IDS = ['42'];
 
-const contractAddressKovan = '0xdcb7Df7eB970607f6018D2bA27Bc14eF83B6AAE0';
-const mockToken1Kovan = '0x22d7f25D0B6d5892c8Cd6A5ef50cd90378E105Fc';
-const mockToken2Kovan = '0x73FcE30e3c80C973241359E73DdAAffDe42BA685';
+const contractAddressKovan = '0x70E883b0272602E49Dfb996d7d9808fB8DD83394';
+const mockToken1Kovan = '0xf912570039238431e13D24d01767d5920C821e58';
+const mockToken2Kovan = '0xD7eD0F05085f48F4a8D5dF0Ac09bB2c3DA7D403c';
 
 const contractAddress = {
   rinkeby: '0xD22460D669B37b90fB5b1bC1855b2E43084CFb3D',

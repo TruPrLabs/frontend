@@ -1,11 +1,18 @@
 import React, { Fragment } from 'react';
 import { styled, TextField, Stack, Tooltip } from '@mui/material';
+// import { withStyles } from '@mui/styles';
 
 import DateTimePicker from '@mui/lab/DateTimePicker';
 
 import Typography from '@mui/material/Typography';
 import { Box } from '@mui/system';
 import { LoadingButton } from '@mui/lab';
+
+// const labelHoverStyle = () => ({
+//   '&:hover': {
+//     cursor: 'pointer',
+//   },
+// });
 
 export const LabelWithText = ({ label, text, variant = 'subtle', placement = 'left', tooltip, textStyle = {} }) => {
   return (
@@ -37,12 +44,13 @@ export const LabelWith = ({
   placement = 'left',
   style = {},
   labelStyle = {},
+  classes,
 }) => {
   if (variant === 'subtle') labelStyle = { ...labelStyle, color: 'subtle', fontSize: '14px' };
   if (placement === 'right') labelStyle.paddingLeft = '0.5em';
   if (placement === 'left') labelStyle.paddingRight = '0.5em';
 
-  var divStyle = {
+  var componentStyle = {
     marginBlock: 'auto',
     textAlign: 'left', // remove textAlign for top-centered label
     // width: '100%',
@@ -51,10 +59,10 @@ export const LabelWith = ({
   const placementBefore = placement === 'top' || placement === 'left';
 
   if (placement === 'left' || placement === 'right')
-    divStyle = { ...divStyle, display: 'inline-flex', justifyContent: 'space-between' };
+    componentStyle = { ...componentStyle, display: 'inline-flex', justifyContent: 'space-between' };
 
   var labelElement = label && (
-    <div style={{ marginBlock: 'auto', display: 'inline-flex' }}>
+    <div style={{ marginBlock: 'auto', display: 'inline-flex', cursor: 'default' }}>
       <Typography sx={{ textAlign: 'left', ...labelStyle }}>{label}</Typography>
 
       {tooltip && tooltipPlacement === '?' && (
@@ -80,7 +88,7 @@ export const LabelWith = ({
     );
 
   var component = (
-    <Box sx={{ ...divStyle, ...style }}>
+    <Box sx={{ ...componentStyle, ...style }}>
       <Fragment>
         {/* <div style={{ display: 'inline-flex', marginBlock: 'auto', justifyContent: 'space-between' }}> */}
         {placementBefore && labelElement}

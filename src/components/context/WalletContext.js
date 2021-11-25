@@ -118,6 +118,8 @@ export const WalletConnector = ({ children }) => {
 
   const isConnected = address && userValidChainId;
 
+  window.signContract = signContract; // XXX: REMOVE THIS!!!!
+
   // ------- init --------
 
   useMemo(() => {

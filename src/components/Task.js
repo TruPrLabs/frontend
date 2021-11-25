@@ -52,14 +52,14 @@ export const Task = ({ task, taskId, detailed }) => {
   const error =
     (task.status !== 1 && 'task has been cancelled') ||
     (now < task.startDate && "task hasn't started") ||
-    (task.endDate <= task.endDate && 'task has ended') ||
-    (isPublic && walletAddress !== task.promoter && 'task is for someone else') ||
+    (task.endDate <= now && 'task has ended') ||
+    (!isPublic && walletAddress !== task.promoter && 'task is for someone else') ||
     (!isPositiveInt(userId) && 'invalid user id');
 
   const canFulfillTask = !error;
 
   const fulfillTask = (id) => {
-    if (isPublic) signContract.fulfillTaskPublic(id, userId).then(handleTx).then(updateTasks).catch(handleTxError);
+    if (isPublic) signContract.fulfillPublicTask(id, userId).then(handleTx).then(updateTasks).catch(handleTxError);
     else signContract.fulfillTask(id).then(handleTx).then(updateTasks).catch(handleTxError);
   };
   // console.log(task);
@@ -144,7 +144,7 @@ export const Task = ({ task, taskId, detailed }) => {
               />
             </RowLabel>
           </Row>
-          <TransactionButton tooltip={error} onClick={() => fulfillTask(taskId, task)} disabled={!canFulfillTask}>
+          <TransactionButton tooltip={error} onClick={() => fulfillTask(taskId)} disabled={!canFulfillTask}>
             Fulfill Task
           </TransactionButton>
         </Fragment>
