@@ -42,7 +42,7 @@ export const TaskConnector = ({ children }) => {
     // console.log('calling init Tasks');
     updateTasks();
     contract.on(contract.filters.TaskCreated(), updateTasks);
-  }, [contract]);
+  }, [chainId]);
 
   const context = {
     tasks: tasks,

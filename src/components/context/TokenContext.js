@@ -16,11 +16,9 @@ export const TokenConnector = ({ children }) => {
   const [tokenApprovals, setTokenApprovals] = useState({});
   const [tokenBalances, setTokenBalances] = useState({});
 
-  const { contract, chainName, chainId, web3Provider } = useContext(Web3Context);
+  const { contract, chainName, chainId, web3Provider, tokenWhitelist, tokenWhitelistAddressToSymbol } =
+    useContext(Web3Context);
   const { walletAddress } = useContext(WalletContext);
-
-  const tokenWhitelist = getErc20TokenWhitelist(chainName, web3Provider);
-  const tokenWhitelistAddressToSymbol = getWhitelistAddressToSymbol(chainName);
 
   const updateApprovals = useCallback(
     (_symbol) => {
@@ -60,8 +58,6 @@ export const TokenConnector = ({ children }) => {
   }, [walletAddress, updateApprovals, updateBalances]);
 
   const context = {
-    tokenWhitelist: tokenWhitelist,
-    tokenWhitelistAddressToSymbol: tokenWhitelistAddressToSymbol,
     tokenApprovals: tokenApprovals,
     tokenBalances: tokenBalances,
     updateApprovals: updateApprovals,

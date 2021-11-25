@@ -8,7 +8,7 @@ import { LabelWithText } from '../config/defaults';
 import { useMoralisQuery } from 'react-moralis';
 import Moralis from 'moralis';
 
-import { TokenContext, TaskContext, WalletContext } from './context/context';
+import { Web3Context, TaskContext, WalletContext } from './context/context';
 import { isPositiveInt, isValidAddress, shortenAddress, clamp, getTaskState, taskTimeDeltaInfo } from '../config/utils';
 import { useMoralisDapp } from '../providers/MoralisDappProvider/MoralisDappProvider';
 
@@ -28,7 +28,7 @@ export const Task = ({ task, taskId, detailed }) => {
   // const
 
   const { walletAddress, signContract, handleTx, handleTxError } = useContext(WalletContext);
-  const { tokenWhitelistAddressToSymbol } = useContext(TokenContext);
+  const { tokenWhitelistAddressToSymbol } = useContext(Web3Context);
   const { updateTasks } = useContext(TaskContext);
 
   let description, title;
@@ -47,6 +47,7 @@ export const Task = ({ task, taskId, detailed }) => {
     description = 'No description found';
     title = `Task ${taskId}`;
   }
+  if (!task) return <div>loading ...</div>;
 
   const isPublic = task.promoter == 0;
   const now = new Date().getTime();
@@ -90,7 +91,7 @@ export const Task = ({ task, taskId, detailed }) => {
         </LabelWith>
         <LabelWithText
           label="Reward"
-          text={task.depositAmount.toString() + ' ' + tokenWhitelistAddressToSymbol[task.erc20Token].toString()}
+          // text={task.depositAmount.toString() + ' ' + tokenWhitelistAddressToSymbol[task.erc20Token].toString()}
         />
       </Row>
       <LinearProgress variant="determinate" value={progress} />
