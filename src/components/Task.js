@@ -27,12 +27,13 @@ export const DisplayTask = () => {
 };
 
 export const Task = ({ task, taskId, detailed }) => {
-  const { walletAddress, signContract, handleTx, handleTxError } = useContext(WalletContext);
+  const { signContract, handleTx, handleTxError } = useContext(WalletContext);
   const { tokenWhitelistAddressToSymbol } = useContext(TokenContext);
   const { updateTasks } = useContext(TaskContext);
   const [userId, setUserId] = useState('');
   const [userIdTouched, setUserIdTouched] = useState(false);
   let description, name;
+  const { walletAddress } = useMoralisDapp();
 
   const { data, error, isLoading } = useMoralisQuery('Task', (query) =>
     query.exists('taskId').equalTo('taskId', taskId.toString()).select('description', 'name', 'taskId')

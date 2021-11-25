@@ -7,6 +7,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import TwitterService from '../services/twitter';
+import EAService from '../services/ea';
 
 import { TaskContext, WalletContext } from './context/context';
 
@@ -38,6 +39,11 @@ export const OpenTasks = () => {
   const [username, setUsername] = useState('');
   const [userId, setUserId] = useState('');
 
+  const testFunction = async () => {
+    let testing = await EAService.getEA(tasks[0]);
+    console.log('Test:', testing);
+  };
+  testFunction();
   var filtered = tasks;
 
   if (filtered?.length) {
