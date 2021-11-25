@@ -86,9 +86,9 @@ export const CreateTask = () => {
   const [confetti, setConfetti] = useState(false);
   const [confettiRunning, setConfettiRunning] = useState(false);
 
-  const { tokenWhitelist, tokenApprovals, tokenBalances, updateApprovals } = useContext(TokenContext);
+  const { tokenApprovals, tokenBalances, updateApprovals } = useContext(TokenContext);
   const { handleTx, handleTxError, signContract, walletProvider } = useContext(WalletContext);
-  const { contract } = useContext(Web3Context);
+  const { tokenWhitelist, contract } = useContext(Web3Context);
 
   // const { width, height } = useWindowDimensions();
 
@@ -637,7 +637,8 @@ export const DevTools = () => {
 
   const [isMinting, setIsMinting] = useState(false);
 
-  const { tokenWhitelist, tokenBalances, updateBalances } = useContext(TokenContext);
+  const { tokenWhitelist } = useContext(Web3Context);
+  const { tokenBalances, updateBalances } = useContext(TokenContext);
   const { handleTxError, handleTx, walletProvider, isConnected } = useContext(WalletContext);
 
   const token = tokenWhitelist[tokenSymbol];

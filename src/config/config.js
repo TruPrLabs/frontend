@@ -51,10 +51,8 @@ export const getContractAddress = (chainName) => {
 };
 
 export const getContract = (chainName) => {
-  console.log(chainName);
   const contractAddress = getContractAddress(chainName);
   const web3Provider = new ethers.providers.Web3Provider(window.ethereum); //getProvider(chainName);
-  console.log(web3Provider);
   return new ethers.Contract(contractAddress, contractABI, web3Provider);
 };
 
