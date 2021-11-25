@@ -70,9 +70,9 @@ export const ID_TO_PLATFORM = {
 
 export const ID_TO_METRIC = {
   Time: 'Time',
-  Likes: 'Likes',
-  Retweets: 'Retweets',
-  Comments: 'Comments',
+  Likes: 'like_count',
+  Retweets: 'retweet_count',
+  Replies: 'reply_count',
 };
 
 export const DURATION_CHOICES = {

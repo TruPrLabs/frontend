@@ -11,7 +11,6 @@ const cliffCheck = (cliff, createdAt) => {
   const date = new Date(createdAt);
   const unixCreatedAt = Math.floor(date / 1000);
   const timeNow = Math.floor(Date.now() / 1000);
-  console.log('Cliff calc:', unixCreatedAt, timeNow, timeNow - unixCreatedAt);
   if (timeNow - unixCreatedAt >= cliff) {
     return true;
   } else {
@@ -30,40 +29,22 @@ const hashCheck = (checkUsers, userid, initialHash, tweetArray, cliff, metricDat
   let matchingItemFound = false;
   let cliffReached = false;
 
-  if (!checkUsers) {
-    for (let i = 0; i < tweetArray.length; i++) {
-      let item = tweetArray[i];
-      const userAndText = userid + item.text;
-      const hashed = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(['string'], [userAndText]));
-      if (initialHash == hashed) {
-        console.log('Item:', item.created_at);
-        const createdAt = item.created_at;
-        matchingItemFound = true;
-        if (cliffCheck(cliff, createdAt)) {
-          cliffReached = true;
-          if (metricData === 'Time') {
-            metricData = cliff;
-          }
+  for (let i = 0; i < tweetArray.length; i++) {
+    let item = tweetArray[i];
+    const itemNoLink = item.text.split(' https://t.co/');
+    const userAndText = itemNoLink[0];
+    const hashed = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(['string'], [userAndText.trim()]));
+    if (initialHash === hashed) {
+      console.log('Item:', item.created_at);
+      const createdAt = item.created_at;
+      matchingItemFound = true;
+      if (cliffCheck(cliff, createdAt)) {
+        cliffReached = true;
+        if (metricData === 'Time') {
+          metricData = cliff;
         }
-        break;
       }
-    }
-  } else {
-    for (let i = 0; i < tweetArray.length; i++) {
-      let item = tweetArray[i];
-      const userAndText = item.id + item.text;
-      const hashed = ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(['string'], [userAndText]));
-      if (initialHash == hashed) {
-        const createdAt = item.created_at;
-        matchingItemFound = true;
-        if (cliffCheck(cliff, createdAt)) {
-          cliffReached = true;
-          if (metricData == 'Time') {
-            metricData = cliff;
-          }
-        }
-        break;
-      }
+      break;
     }
   }
 

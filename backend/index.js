@@ -40,7 +40,7 @@ const getEAResult = async (req, res) => {
   const endTime = unixToISO(task.endDate);
   const taskId = task.taskId;
   const endpoint = task.endpoint;
-  const tweetHash = task.tweetHash;
+  const messageHash = task.messageHash;
   const metric = task.metric;
   const cliff = task.cliff;
   const platform = task.platform;
@@ -95,7 +95,7 @@ const getEAResult = async (req, res) => {
     userId = response.body.data.id;
 
     const bioArray = response.body.data.description.split(' ').map((i) => i.toLowerCase());
-    const accountBool = bioArray.includes(userAddress);
+    const accountBool = bioArray.includes(userAddress.toLowerCase());
     console.log('BIO', bioArray);
     console.log('My account?', accountBool);
 
@@ -132,7 +132,7 @@ const getEAResult = async (req, res) => {
   });
 
   if (response.body) {
-    console.log('Resbody', response.body.data);
+    console.log('Resbody', response.body);
     if (!response.body.data) {
       res.send(invalidResult);
       return invalidResult;
@@ -145,7 +145,7 @@ const getEAResult = async (req, res) => {
     response.body.data = hashCheck(
       hashUserId,
       userId,
-      tweetHash,
+      messageHash,
       tweetArr,
       cliff,
       metric !== 'Time' ? response.body.data[0].public_metrics[metric] : 'Time',

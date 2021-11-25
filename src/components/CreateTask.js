@@ -92,6 +92,7 @@ export const CreateTask = () => {
     platform: platform,
     userId: promoterUserId,
     metric: metric,
+    endpoint: isPublic ? 'Public' : 'UserTimeline',
     messageHash: ethers.utils.keccak256(ethers.utils.defaultAbiCoder.encode(['string'], [message.trim()])),
   });
 
@@ -203,7 +204,7 @@ export const CreateTask = () => {
           taskId: taskId,
           status: 1,
           name: name,
-          message: isPublic ? message : '',
+          message: message,
           description: isPublic ? `Promotion content: \n${message}\nDescription: \n${description}` : description,
           type: isPublic ? 'Public' : 'Personal',
           platform: platform,
@@ -469,8 +470,8 @@ export const CreateTask = () => {
                 }}
               >
                 {Object.entries(METRIC_TO_ID).map(([choice, time]) => (
-                  <MenuItem key={time} value={time}>
-                    {choice}
+                  <MenuItem key={time} value={choice}>
+                    {time}
                   </MenuItem>
                 ))}
               </StyledTextField>
