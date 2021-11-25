@@ -1,10 +1,18 @@
 import React, { Fragment } from 'react';
 import { styled, TextField, Stack, Tooltip } from '@mui/material';
+// import { withStyles } from '@mui/styles';
 
 import DateTimePicker from '@mui/lab/DateTimePicker';
 
 import Typography from '@mui/material/Typography';
 import { Box } from '@mui/system';
+import { LoadingButton } from '@mui/lab';
+
+// const labelHoverStyle = () => ({
+//   '&:hover': {
+//     cursor: 'pointer',
+//   },
+// });
 
 export const LabelWithText = ({ label, text, variant = 'subtle', placement = 'left', tooltip, textStyle = {} }) => {
   return (
@@ -36,12 +44,13 @@ export const LabelWith = ({
   placement = 'left',
   style = {},
   labelStyle = {},
+  classes,
 }) => {
   if (variant === 'subtle') labelStyle = { ...labelStyle, color: 'subtle', fontSize: '14px' };
   if (placement === 'right') labelStyle.paddingLeft = '0.5em';
   if (placement === 'left') labelStyle.paddingRight = '0.5em';
 
-  var divStyle = {
+  var componentStyle = {
     marginBlock: 'auto',
     textAlign: 'left', // remove textAlign for top-centered label
     // width: '100%',
@@ -50,19 +59,15 @@ export const LabelWith = ({
   const placementBefore = placement === 'top' || placement === 'left';
 
   if (placement === 'left' || placement === 'right')
-    divStyle = { ...divStyle, display: 'inline-flex', justifyContent: 'space-between' };
+    componentStyle = { ...componentStyle, display: 'inline-flex', justifyContent: 'space-between' };
 
   var labelElement = label && (
-    <div style={{ marginBlock: 'auto', display: 'inline-flex' }}>
-      <Typography inline sx={{ textAlign: 'left', ...labelStyle }}>
-        {label}
-      </Typography>
+    <div style={{ marginBlock: 'auto', display: 'inline-flex', cursor: 'default' }}>
+      <Typography sx={{ textAlign: 'left', ...labelStyle }}>{label}</Typography>
 
       {tooltip && tooltipPlacement === '?' && (
         <Tooltip title={tooltip} placement="top" style={{ marginInline: '0.5em' }}>
-          <Typography inline sx={{ ...labelStyle, color: '#9e9e9e' }}>
-            ?
-          </Typography>
+          <Typography sx={{ ...labelStyle, color: '#9e9e9e' }}>?</Typography>
         </Tooltip>
       )}
     </div>
@@ -83,7 +88,7 @@ export const LabelWith = ({
     );
 
   var component = (
-    <Box sx={{ ...divStyle, ...style }}>
+    <Box sx={{ ...componentStyle, ...style }}>
       <Fragment>
         {/* <div style={{ display: 'inline-flex', marginBlock: 'auto', justifyContent: 'space-between' }}> */}
         {placementBefore && labelElement}
@@ -104,6 +109,19 @@ export const LabelWith = ({
   return component;
 };
 
+export const TransactionButton = (props) => {
+  const button = <LoadingButton variant="contained" {...props} style={{ width: '100%', ...props.style }} />;
+
+  if (props.tooltip)
+    return (
+      <Tooltip title={props.tooltip} placement="top">
+        <span>{button}</span>
+      </Tooltip>
+    );
+
+  return button;
+};
+
 const StyledStack = styled(Stack)(({ theme }) => ({
   margin: '1em 0',
   padding: '1em 1em',
@@ -120,8 +138,9 @@ const StyleRow = styled(Stack)(({ theme }) => ({
   // marginLeft: 'auto',
   // marginRight: 'auto',
   textAlign: 'center',
+  width: '100%',
+  // display: 'block',
   display: 'inline-flex',
-  // display: 'inline-fuck',
   justifyContent: 'space-between',
   // margin: 'auto',
 }));

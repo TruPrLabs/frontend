@@ -61,6 +61,8 @@ export const WalletConnector = ({ children }) => {
   const [address, setAddress] = useState(null);
   const [signContract, setSignContract] = useState(null);
 
+  const [isSendingTx, setIsSendingTx] = useState(false);
+
   const [alertState, setAlertState] = useState({
     open: false,
     message: '',
@@ -83,6 +85,7 @@ export const WalletConnector = ({ children }) => {
 
   const handleTxError = useCallback(
     (e) => {
+      setIsSendingTx(false);
       if (e.reason === 'sending a transaction requires a signer') {
         if (!userValidChainId) alert('Please switch to a valid network');
         else alert('Please connect your wallet');
@@ -94,9 +97,11 @@ export const WalletConnector = ({ children }) => {
   );
 
   const handleTx = useCallback(async (tx) => {
+    setIsSendingTx(true);
     alert(<TransactionLink txHash={tx.hash} message="Processing Transaction" />, 'info');
     const receipt = await tx.wait();
     alert(<TransactionLink txHash={receipt.transactionHash} message="Transaction successful!" />, 'success');
+    setIsSendingTx(false);
     return receipt;
   }, []);
 
@@ -112,6 +117,8 @@ export const WalletConnector = ({ children }) => {
   };
 
   const isConnected = address && userValidChainId;
+
+  window.signContract = signContract; // XXX: REMOVE THIS!!!!
 
   // ------- init --------
 
@@ -149,6 +156,7 @@ export const WalletConnector = ({ children }) => {
     requestAccount: requestAccount,
     handleTx: handleTx,
     handleTxError: handleTxError,
+    isSendingTx: isSendingTx,
   };
 
   return (
