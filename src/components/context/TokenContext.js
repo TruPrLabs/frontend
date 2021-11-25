@@ -29,7 +29,7 @@ export const TokenConnector = ({ children }) => {
       Object.entries(tokenWhitelist).forEach(([symbol, token]) => {
         if (!_symbol || _symbol === symbol) {
           token.contract.allowance(walletAddress, contract.address).then((allowance) => {
-            const approved = allowance.toString() === ethers.constants.MaxUint256.toString();
+            const approved = allowance >= ethers.utils.parseEther('100');
             setTokenApprovals((approvals) => copyAddKeyValue(approvals, symbol, approved));
           });
         }
