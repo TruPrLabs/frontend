@@ -54,7 +54,17 @@ export const OpenTasks = () => {
           <Checkbox checked={viewAll} onChange={(event) => setViewAll(event.target.checked)} />
           View all tasks
         </div>
-        <FormControl style={{ width: '150px' }}>
+        <div>
+          <StyledTextField
+            variant="filled"
+            label="Search"
+            value={search}
+            onChange={({ target }) => {
+              setSearch(target.value);
+            }}
+          />
+        </div>
+        <FormControl variant="filled" style={{ width: '150px' }}>
           <InputLabel>Sort by</InputLabel>
           <Select
             value={sort}
@@ -67,15 +77,6 @@ export const OpenTasks = () => {
             <MenuItem value="dateAsc">Date: Oldest</MenuItem>
           </Select>
         </FormControl>
-        <div>
-          <StyledTextField
-            label="Search"
-            value={search}
-            onChange={({ target }) => {
-              setSearch(target.value);
-            }}
-          />
-        </div>
       </div>
       <h2>Open Tasks</h2>
       <Box sx={{ flexGrow: 1 }}>
