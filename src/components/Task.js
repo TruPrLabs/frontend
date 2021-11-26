@@ -169,7 +169,7 @@ export const Task = ({ task, taskId, detailed }) => {
   const taskState = getTaskState(task);
 
   return (
-    <Column style={{ position: 'relative' }}>
+    <Column style={{ position: 'relative', textAlign: 'left' }}>
       <Row>
         <Row>
           <LabelWithText
@@ -208,7 +208,7 @@ export const Task = ({ task, taskId, detailed }) => {
           </Box>
         </Tooltip>
       </Row>
-      <h3>{title ? title : 'Task ' + taskId}</h3>
+      <h2 style={{ textAlign: 'center' }}>{title ? title : 'Task ' + taskId}</h2>
 
       {/* <Row> */}
       {/* </Row> */}
@@ -225,6 +225,8 @@ export const Task = ({ task, taskId, detailed }) => {
 
       {detailed && (
         <Fragment>
+          {/* <h3>Task Description</h3>
+          asldfjsaldfjlskdjf */}
           <Row>
             <LabelWithText placement="top" label="Task description" text={description} />
           </Row>
@@ -245,15 +247,12 @@ export const Task = ({ task, taskId, detailed }) => {
               </Button>
             </CopyToClipboard>
           )}
-
           <Row>
             <LabelWithText placement="top" label="Requirements" text={requirementInfo} />
           </Row>
-
           <Row>
             <LabelWithText placement="top" label="Reward" text={rewardInfo} />
           </Row>
-
           {isPublic && (
             <Row>
               <RowLabel
