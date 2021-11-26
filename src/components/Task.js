@@ -65,12 +65,13 @@ export const Task = ({ task, taskId, detailed }) => {
     message = parsedData.message;
     ethAddress = task.sponsor;
     // console.log('user name', parsedData.user?.name);
-  } else {
-    description = 'No description found';
-    title = `Task ${taskId}`;
-    username = task.sponsor;
-    message = '';
   }
+
+  description = description || 'No description given';
+  title = title || `Task ${taskId}`;
+  username = username || task.sponsor;
+  message = message || 'No message given';
+
   if (!task) return <div>loading ...</div>;
 
   const isPublic = task.promoter == 0;
