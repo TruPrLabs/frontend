@@ -14,9 +14,23 @@ import { LoadingButton } from '@mui/lab';
 //   },
 // });
 
-export const LabelWithText = ({ label, text, variant = 'subtle', placement = 'left', tooltip, textStyle = {} }) => {
+export const LabelWithText = ({
+  label,
+  text,
+  variant = 'subtle',
+  placement = 'left',
+  tooltip,
+  tooltipPlacement = 'left',
+  textStyle = {},
+}) => {
   return (
-    <LabelWith label={label} variant={variant} placement={placement} tooltip={tooltip}>
+    <LabelWith
+      label={label}
+      variant={variant}
+      placement={placement}
+      tooltip={tooltip}
+      tooltipPlacement={tooltipPlacement}
+    >
       <div style={{ marginBlock: 'auto' }}>
         <Typography
           style={{
