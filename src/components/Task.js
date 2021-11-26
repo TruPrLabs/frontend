@@ -1,5 +1,15 @@
 import { Fragment, useContext, useState } from 'react';
-import { Button, LinearProgress, Chip, InputAdornment, Paper, Tooltip } from '@mui/material';
+import {
+  Button,
+  LinearProgress,
+  Chip,
+  InputAdornment,
+  Paper,
+  Tooltip,
+  Alert,
+  AlertTitle,
+  Snackbar,
+} from '@mui/material';
 import { Column, Row, RowLabel, LabelWith, StyledTextField, TransactionButton } from '../config/defaults';
 import { Link, useParams } from 'react-router-dom';
 
@@ -15,6 +25,9 @@ import { useMoralisDapp } from '../providers/MoralisDappProvider/MoralisDappProv
 import { getIcon, getReadableDate } from '../config/utils';
 import { Box } from '@mui/system';
 
+import EAService from '../services/ea';
+import { render } from '@testing-library/react';
+
 export const DisplayTask = () => {
   const { id } = useParams();
   const { tasks } = useContext(TaskContext);
@@ -25,13 +38,16 @@ export const DisplayTask = () => {
 export const Task = ({ task, taskId, detailed }) => {
   const [userId, setUserId] = useState('');
   const [userIdTouched, setUserIdTouched] = useState(false);
+  const [severity, setSeverity] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [msg, setMsg] = useState('');
   // const
 
   const { walletAddress, signContract, handleTx, handleTxError } = useContext(WalletContext);
   const { tokenWhitelistAddressToSymbol } = useContext(Web3Context);
   const { updateTasks } = useContext(TaskContext);
 
-  let description, title, username, message;
+  let description, title, username, message, ethAddress;
   //const { walletAddress } = useMoralisDapp();
 
   const { data } = useMoralisQuery('Task', (query) =>
@@ -47,11 +63,12 @@ export const Task = ({ task, taskId, detailed }) => {
     title = parsedData.title;
     username = parsedData.sponsor.username;
     message = parsedData.message;
+    ethAddress = task.sponsor;
     // console.log('user name', parsedData.user?.name);
   } else {
     description = 'No description found';
     title = `Task ${taskId}`;
-    username = 'Default';
+    username = task.sponsor;
     message = '';
   }
   if (!task) return <div>loading ...</div>;
@@ -76,6 +93,40 @@ export const Task = ({ task, taskId, detailed }) => {
 
   // console.log(task.startDate < now, now < task.endDate, isPublic || walletAddress === task.promoter, task.status == 1);
 
+  const checkFulfill = async () => {
+    let result = await EAService.getResult(task, walletAddress, userId);
+    console.log('Result', result);
+
+    const responseStatus = result.responseStatus;
+    const score = result.score;
+
+    if (responseStatus === 2) {
+      setSeverity('error');
+      setMsg('There was a mistake in processing your request. Please try again later.');
+      setOpen(true);
+    }
+
+    if (responseStatus === 0) {
+      setSeverity('warning');
+      setMsg('We have not found any post matching the task requirements.');
+      setOpen(true);
+    }
+
+    if (responseStatus === 1) {
+      setSeverity('success');
+      setMsg(`We have found a matching post! Your current score is ${score}, depending on the requirements, you might be
+      eligible for rewards.`);
+      setOpen(true);
+    }
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
+
   const progress = clamp(((now - task.startDate) / (task.endDate - task.startDate)) * 100, 0, 100);
   const taskState = getTaskState(task);
 
@@ -87,7 +138,7 @@ export const Task = ({ task, taskId, detailed }) => {
             label={isPublic ? 'Public task' : 'For ' + shortenAddress(task.promoter)}
             tooltip={!isPublic && task.promoter}
           />
-          <LabelWithText label="Created by" text={username} tooltip={task.sponsor} />
+          <LabelWithText label="Created by" text={username.slice(0, 6) + '...'} tooltip={task.sponsor} />
         </Row>
         {getIcon('Twitter')}
       </Row>
@@ -156,9 +207,21 @@ export const Task = ({ task, taskId, detailed }) => {
               </RowLabel>
             </Row>
           )}
+          <TransactionButton
+            color="primary"
+            tooltip={'Check if you have met the conditions of the promotion'}
+            onClick={checkFulfill}
+          >
+            Check eligibility
+          </TransactionButton>
           <TransactionButton tooltip={error} onClick={() => fulfillTask(taskId)} disabled={!canFulfillTask}>
             Fulfill Task
           </TransactionButton>
+          <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
+            <Alert severity={severity} onClose={handleClose}>
+              {msg}
+            </Alert>
+          </Snackbar>
         </Fragment>
       )}
     </Column>

@@ -39,11 +39,6 @@ export const OpenTasks = () => {
   const [username, setUsername] = useState('');
   const [userId, setUserId] = useState('');
 
-  const testFunction = async () => {
-    let testing = await EAService.getResult(tasks[9], walletAddress, '1395461422121984004');
-    console.log('Test:', testing);
-  };
-  //testFunction();
   var filtered = tasks;
 
   if (filtered?.length) {
