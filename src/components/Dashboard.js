@@ -68,13 +68,13 @@ export const DashBoard = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
-        <Grid item xs={12} md={6} lg={4}>
+        <Grid item xs={12} sm={12} md={6} lg={6}>
           <Column>
             <h2>My Assigned Tasks</h2>
             <MyTasks tasks={myTasks} />
           </Column>
         </Grid>
-        <Grid item xs={12} md={6} lg={4}>
+        <Grid item xs={12} sm={12} md={6} lg={6}>
           <Column>
             <h2>My Created Tasks</h2>
             <MyTasks tasks={createdTasks} headTo="Create Task" toLink="/create-task" />

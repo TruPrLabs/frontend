@@ -102,7 +102,7 @@ export const OpenTasks = () => {
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
           {filtered.map((task, id) => (
-            <Grid item key={id} sm={12} md={6} lg={4}>
+            <Grid item key={id} xs={12} sm={12} md={6} lg={4} xl={4}>
               <Task task={task} taskId={id} />
             </Grid>
           ))}
