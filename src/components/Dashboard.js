@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { useMemo, useState, useContext } from 'react';
-import { Button, InputAdornment } from '@mui/material';
+import { Button, Divider, InputAdornment } from '@mui/material';
 import { Column, StyledTextFieldInfo, LabelWithText, LabelWith, Row } from '../config/defaults';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -15,16 +15,17 @@ import { Link } from 'react-router-dom';
 // ================== Contract Infos ====================
 
 const TaskList = ({ tasks }) => (
-  <Box sx={{ width: '100%', bgcolor: 'paper', overflow: 'auto', maxHeight: 300 }}>
+  <Box
+    sx={{ width: '100%', bgcolor: 'paper', overflow: 'auto', maxHeight: 300 }}
+    style={{ display: 'flex', flexDirection: 'column' }}
+  >
     {/* <Divider variant="inset" /> */}
     {tasks.map((task) => (
-      <Row key={task.id}>
-        <LabelWith label={taskTimeDeltaInfo(task)} placement="right">
-          <Button variant="text" component={Link} to={'/task/' + task.id} style={{ minWidth: 60 }}>
-            {'Task ' + task.id}
-          </Button>
-        </LabelWith>
-      </Row>
+      <LabelWith key={task.id} label={taskTimeDeltaInfo(task)} placement="right">
+        <Button variant="text" component={Link} to={'/task/' + task.id} style={{ minWidth: 60 }}>
+          {'Task ' + task.id}
+        </Button>
+      </LabelWith>
     ))}
   </Box>
 );
@@ -43,18 +44,25 @@ const MyTasks = ({ tasks, headTo = 'Open Tasks', toLink = '/open-tasks' }) => {
   const myTasksOpen = tasks.filter((task) => getTaskState(task) === 'Open');
   const myTasksClosed = tasks.filter((task) => getTaskState(task) !== 'Open');
   return (
-    <Fragment>
-      {myTasksOpen.length && (
-        <LabelWith label="Open Tasks" placement="top" variant="standard">
-          <TaskList tasks={myTasksOpen} />
-        </LabelWith>
-      )}
-      {myTasksClosed.length > 0 && (
-        <LabelWith label="Closed Tasks" placement="top" variant="standard">
-          <TaskList tasks={myTasksClosed} />
-        </LabelWith>
-      )}
-    </Fragment>
+    <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+      <Box style={{ display: 'flex', flexDirection: 'column', flex: '1', alignItems: 'center' }}>
+        <h4>Open</h4>
+        {myTasksOpen.length && (
+          <LabelWith placement="top" variant="standard">
+            <TaskList tasks={myTasksOpen} />
+          </LabelWith>
+        )}
+      </Box>
+      <Divider style={{ width: '1px', height: 'auto', background: '#747474' }} orientation="vertical" />
+      <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: '1' }}>
+        <h4>Closed</h4>
+        {myTasksClosed.length > 0 && (
+          <LabelWith placement="top" variant="standard">
+            <TaskList tasks={myTasksClosed} />
+          </LabelWith>
+        )}
+      </Box>
+    </Box>
   );
 };
 

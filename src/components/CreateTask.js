@@ -778,28 +778,26 @@ export const DevTools = () => {
       <TransactionButton loading={isMinting} onClick={mint}>
         Mint 1000
       </TransactionButton>
-      <h2 style={{ marginTop: '30px', marginBottom: '30px' }}> Twitter tools</h2>
-      <Row>
-        <StyledTextField
-          label="User handle"
-          value={username}
-          onChange={({ target }) => {
-            setUsername(target.value);
-          }}
-        ></StyledTextField>{' '}
-        <TransactionButton
-          variant="contained"
-          onClick={async () => {
-            setIsLoading(true);
-            let user = await TwitterService.getId({ username });
-            setTwitterId(user);
-            setIsLoading(false);
-            console.log(twitterId);
-          }}
-        >
-          Get user Id
-        </TransactionButton>
-      </Row>
+      <h2 style={{ marginTop: '30px', marginBottom: '15px' }}> Twitter tools</h2>
+      <TextField
+        label="User handle"
+        value={username}
+        onChange={({ target }) => {
+          setUsername(target.value);
+        }}
+      ></TextField>{' '}
+      <TransactionButton
+        variant="contained"
+        onClick={async () => {
+          setIsLoading(true);
+          let user = await TwitterService.getId({ username });
+          setTwitterId(user);
+          setIsLoading(false);
+          console.log(twitterId);
+        }}
+      >
+        Get user Id
+      </TransactionButton>
       <strong style={{ marginTop: '20px' }}>Result: {twitterId}</strong>
     </Column>
   );

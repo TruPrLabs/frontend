@@ -38,7 +38,7 @@ export const DisplayTask = () => {
 export const Task = ({ task, taskId, detailed }) => {
   const [userId, setUserId] = useState('');
   const [userIdTouched, setUserIdTouched] = useState(false);
-  const [severity, setSeverity] = useState(false);
+  const [severity, setSeverity] = useState('info');
   const [open, setOpen] = useState(false);
   const [msg, setMsg] = useState('');
   // const
