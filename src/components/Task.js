@@ -69,7 +69,7 @@ export const Task = ({ task, taskId, detailed }) => {
 
   description = description || 'No description given';
   title = title || `Task ${taskId}`;
-  username = username || task.sponsor;
+  username = username || shortenAddress(task.sponsor);
   message = message || 'No message given';
 
   if (!task) return <div>loading ...</div>;
@@ -139,7 +139,7 @@ export const Task = ({ task, taskId, detailed }) => {
             label={isPublic ? 'Public task' : 'For ' + shortenAddress(task.promoter)}
             tooltip={!isPublic && task.promoter}
           />
-          <LabelWithText label="Created by" text={username.slice(0, 6) + '...'} tooltip={task.sponsor} />
+          <LabelWithText label="Created by" text={username} tooltip={task.sponsor} tooltipPlacement="component" />
         </Row>
         {getIcon('Twitter')}
       </Row>
