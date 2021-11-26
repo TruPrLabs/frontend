@@ -54,14 +54,14 @@ export const Task = ({ task, taskId, detailed }) => {
     query
       .exists('taskId')
       .equalTo('taskId', taskId.toString())
-      .select('description', 'title', 'taskId', 'sponsor', 'message')
+      .select('description', 'title', 'taskId', 'user', 'message')
   );
 
   if (data[0]) {
     const parsedData = JSON.parse(JSON.stringify(data[0]));
     description = parsedData.description;
     title = parsedData.title;
-    username = parsedData.sponsor.username;
+    username = parsedData.user.username;
     message = parsedData.message;
     ethAddress = task.sponsor;
     // console.log('user name', parsedData.user?.name);
