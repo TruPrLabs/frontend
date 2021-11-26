@@ -31,21 +31,28 @@ export const Task = ({ task, taskId, detailed }) => {
   const { tokenWhitelistAddressToSymbol } = useContext(Web3Context);
   const { updateTasks } = useContext(TaskContext);
 
-  let description, title;
+  let description, title, username, message;
   //const { walletAddress } = useMoralisDapp();
 
   const { data } = useMoralisQuery('Task', (query) =>
-    query.exists('taskId').equalTo('taskId', taskId.toString()).select('description', 'title', 'taskId', 'user')
+    query
+      .exists('taskId')
+      .equalTo('taskId', taskId.toString())
+      .select('description', 'title', 'taskId', 'sponsor', 'message')
   );
 
   if (data[0]) {
     const parsedData = JSON.parse(JSON.stringify(data[0]));
     description = parsedData.description;
     title = parsedData.title;
+    username = parsedData.sponsor.username;
+    message = parsedData.message;
     // console.log('user name', parsedData.user?.name);
   } else {
     description = 'No description found';
     title = `Task ${taskId}`;
+    username = 'Default';
+    message = '';
   }
   if (!task) return <div>loading ...</div>;
 
@@ -80,7 +87,7 @@ export const Task = ({ task, taskId, detailed }) => {
             label={isPublic ? 'Public task' : 'For ' + shortenAddress(task.promoter)}
             tooltip={!isPublic && task.promoter}
           />
-          <LabelWithText label="Created by" text="Username#1237" tooltip={task.sponsor} />
+          <LabelWithText label="Created by" text={username} tooltip={task.sponsor} />
         </Row>
         {getIcon('Twitter')}
       </Row>
@@ -91,7 +98,11 @@ export const Task = ({ task, taskId, detailed }) => {
         </LabelWith>
         <LabelWithText
           label="Reward"
-          // text={task.depositAmount.toString() + ' ' + tokenWhitelistAddressToSymbol[task.erc20Token].toString()}
+          text={
+            task.depositAmount
+              ? task.depositAmount.toString() + ' ' + tokenWhitelistAddressToSymbol[task.erc20Token].toString()
+              : ' '
+          }
         />
       </Row>
       <LinearProgress variant="determinate" value={progress} />
@@ -107,7 +118,7 @@ export const Task = ({ task, taskId, detailed }) => {
           </Box>
         </Tooltip>
       </Row>
-      <h3>{'Task ' + taskId}</h3>
+      <h3>{title ? title : 'Task ' + taskId}</h3>
 
       <Paper elevation={4} sx={{ padding: '1em' }}>
         <Row>

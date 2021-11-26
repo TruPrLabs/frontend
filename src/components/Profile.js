@@ -69,7 +69,7 @@ const Profile = () => {
               setBio(event.target.value);
             }}
           />
-          <Button onClick={handleClick} disabled={isUserUpdating}>
+          <Button variant="contained" onClick={handleClick} disabled={isUserUpdating}>
             Submit changes
           </Button>
         </Box>
