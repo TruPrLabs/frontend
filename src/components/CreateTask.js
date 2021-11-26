@@ -324,6 +324,7 @@ export const CreateTask = () => {
           ...task,
           taskId: taskId,
           title: title,
+          message: message,
           description: description,
           message: message,
           type: isPublic ? 'Public' : 'Personal',
