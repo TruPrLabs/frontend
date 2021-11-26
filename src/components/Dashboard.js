@@ -18,49 +18,66 @@ const TaskList = ({ tasks }) => (
   <Box sx={{ width: '100%', bgcolor: 'paper', overflow: 'auto', maxHeight: 300 }}>
     {/* <Divider variant="inset" /> */}
     {tasks.map((task) => (
-      <LabelWith key={task.id} label={taskTimeDeltaInfo(task)} placement="right">
-        <Button variant="text" component={Link} to={'/task/' + task.id} style={{ minWidth: 60 }}>
-          {'Task ' + task.id}
-        </Button>
-      </LabelWith>
+      <Row key={task.id}>
+        <LabelWith label={taskTimeDeltaInfo(task)} placement="right">
+          <Button variant="text" component={Link} to={'/task/' + task.id} style={{ minWidth: 60 }}>
+            {'Task ' + task.id}
+          </Button>
+        </LabelWith>
+      </Row>
     ))}
   </Box>
 );
+
+const MyTasks = ({ tasks, headTo = 'Open Tasks', toLink = '/open-tasks' }) => {
+  if (tasks.length === 0)
+    return (
+      <div>
+        <Typography>No tasks yet.. Head over to </Typography>
+        <Button variant="text" component={Link} to={toLink} style={{ minWidth: 60 }}>
+          {headTo}
+        </Button>
+      </div>
+    );
+
+  const myTasksOpen = tasks.filter((task) => getTaskState(task) === 'Open');
+  const myTasksClosed = tasks.filter((task) => getTaskState(task) !== 'Open');
+  return (
+    <Fragment>
+      {myTasksOpen.length && (
+        <LabelWith label="Open Tasks" placement="top" variant="standard">
+          <TaskList tasks={myTasksOpen} />
+        </LabelWith>
+      )}
+      {myTasksClosed.length > 0 && (
+        <LabelWith label="Closed Tasks" placement="top" variant="standard">
+          <TaskList tasks={myTasksClosed} />
+        </LabelWith>
+      )}
+    </Fragment>
+  );
+};
 
 export const DashBoard = () => {
   const { tasks } = useContext(TaskContext);
   const { walletAddress } = useContext(WalletContext);
 
   const myTasks = tasks.filter((task) => task.promoter === walletAddress);
-  const myOpenTasks = myTasks.filter((task) => getTaskState(task) === 'Open');
-  const myClosedTasks = myTasks.filter((task) => getTaskState(task) !== 'Open');
-
-  const noTasksFound = (
-    <Row>
-      <Typography>No tasks yet.. Head over to </Typography>
-      <Button variant="text" component={Link} to={'/open-tasks'} style={{ minWidth: 60 }}>
-        Open Tasks
-      </Button>
-      .
-    </Row>
-  );
+  const createdTasks = tasks.filter((task) => task.sponsor === walletAddress);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
         <Grid item xs={12} md={6} lg={4}>
           <Column>
-            <h2>My Tasks</h2>
-            <LabelWith label="Open Tasks" placement="top" variant="standard">
-              {myOpenTasks.length ? <TaskList tasks={myTasks} /> : noTasksFound}
-            </LabelWith>
-            <LabelWith label="Closed Tasks" placement="top" variant="standard">
-              {myClosedTasks.length ? <TaskList tasks={myClosedTasks} /> : noTasksFound}
-            </LabelWith>
+            <h2>My Assigned Tasks</h2>
+            <MyTasks tasks={myTasks} />
           </Column>
+        </Grid>
+        <Grid item xs={12} md={6} lg={4}>
           <Column>
-            <h2>My Closed Tasks</h2>
-            {myClosedTasks.length ? <TaskList tasks={myClosedTasks} /> : noTasksFound}
+            <h2>My Created Tasks</h2>
+            <MyTasks tasks={createdTasks} headTo="Create Task" toLink="/create-task" />
           </Column>
         </Grid>
       </Grid>

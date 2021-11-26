@@ -27,6 +27,7 @@ export const Web3Connector = ({ children }) => {
   const tokenWhitelistAddressToSymbol = getWhitelistAddressToSymbol(chainName);
 
   const setChainIdWrapper = (id) => {
+    // console.log('calling setchain', id);
     setUserChainId(id);
     if (isValidChainId(id)) setChainId(id);
   };

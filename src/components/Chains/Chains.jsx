@@ -91,7 +91,7 @@ function Chains() {
   const { switchNetwork } = useChain();
   const { chainId } = useMoralisDapp();
 
-  const selected = menuItems.find((item) => item.key === chainId).key || menuItems[0];
+  const selected = menuItems.find((item) => item.key === chainId)?.key || menuItems[0].key;
 
   const handleClick = (event) => {
     switchNetwork(event.target.value);

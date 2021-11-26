@@ -42,7 +42,7 @@ const parseTxError = (e) => {
   try {
     return JSON.parse(/\(error=(.+), method.+\)/g.exec(e.message)[1]).message;
   } catch (error) {
-    return e?.message;
+    return e?.message || e;
   }
 };
 
@@ -125,15 +125,13 @@ export const WalletConnector = ({ children }) => {
   useMemo(() => {
     setProvider(getProvider());
     if (window.ethereum) {
-      // add account listener
       window.ethereum.on('accountsChanged', (accounts) => {
         updateAccounts(accounts);
       });
-      // add network listener
-      window.ethereum.on('chainChanged', (chainId) => {
-        // setProvider(getProvider());
-        setChainId(chainId.toString());
-      });
+      // XXX: moralis is updating this, currently inefficient
+      // window.ethereum.on('chainChanged', (chainId) => {
+      //   setChainId(chainId.toString());
+      // });
     }
   }, []);
 
@@ -143,9 +141,11 @@ export const WalletConnector = ({ children }) => {
       provider
         .getNetwork()
         .then((network) => setChainId(network?.chainId?.toString()))
-        .catch(handleTxError);
+        .catch(() => {});
+      // .catch(handleTxError); // fails on fuji network
       provider.send('eth_accounts').then(updateAccounts).catch(handleTxError);
     }
+    // }, [provider, contract]);
   }, [provider, contract, handleTxError, isConnected]);
 
   const context = {
