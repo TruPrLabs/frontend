@@ -34,6 +34,7 @@ import useWindowDimensions from '../hooks/useWindowDimensions';
 import Confetti from 'react-confetti';
 import { useNewMoralisObject, useMoralis, useMoralisQuery } from 'react-moralis';
 import { useMoralisDapp } from '../providers/MoralisDappProvider/MoralisDappProvider';
+import TwitterService from '../services/twitter';
 
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -726,6 +727,9 @@ export const DevTools = () => {
   const [tokenSymbol, setTokenSymbol] = useState('MOCK');
 
   const [isMinting, setIsMinting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [username, setUsername] = useState('');
+  const [twitterId, setTwitterId] = useState('');
 
   const { tokenWhitelist } = useContext(Web3Context);
   const { tokenBalances, updateBalances } = useContext(TokenContext);
@@ -755,7 +759,7 @@ export const DevTools = () => {
 
   return (
     <Column>
-      <h2>Dev Tools</h2>
+      <h2>Faucet</h2>
       <TextField
         select
         variant="outlined"
@@ -774,6 +778,29 @@ export const DevTools = () => {
       <TransactionButton loading={isMinting} onClick={mint}>
         Mint 1000
       </TransactionButton>
+      <h2 style={{ marginTop: '30px', marginBottom: '30px' }}> Twitter tools</h2>
+      <Row>
+        <StyledTextField
+          label="User handle"
+          value={username}
+          onChange={({ target }) => {
+            setUsername(target.value);
+          }}
+        ></StyledTextField>{' '}
+        <TransactionButton
+          variant="contained"
+          onClick={async () => {
+            setIsLoading(true);
+            let user = await TwitterService.getId({ username });
+            setTwitterId(user);
+            setIsLoading(false);
+            console.log(twitterId);
+          }}
+        >
+          Get user Id
+        </TransactionButton>
+      </Row>
+      <strong style={{ marginTop: '20px' }}>Result: {twitterId}</strong>
     </Column>
   );
 };

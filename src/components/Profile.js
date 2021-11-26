@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react';
 import Address from './Address/Address';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { Grid } from '@mui/material';
+import { Divider, Grid, Paper } from '@mui/material';
 import { TextField } from '@mui/material';
 import Button from '@mui/material/Button';
 
@@ -40,11 +40,18 @@ const Profile = () => {
       <Box>
         <Blockie currentWallet scale={20} />
         <Grid>
-          <Typography style={{ border: '1px' }} mt={2}>
+          <Typography
+            style={{ border: '1px', fontFamily: 'Rubic', fontSize: '20px', paddingTop: '10px' }}
+            mt={2}
+            mb={2}
+          >
             {user.attributes.username}
           </Typography>
           <Address size={14} copyable style={{ fontSize: '20px', justifyContent: 'center' }} />
-          <Typography mt={2}> {user.attributes.bio ? user.attributes.bio : 'Empty bio'} </Typography>
+          <Typography mt={2} style={{ border: '1px', fontFamily: 'Rubic', fontSize: '20px' }}>
+            {' '}
+            {user.attributes.bio ? user.attributes.bio : 'Empty bio'}{' '}
+          </Typography>
         </Grid>
         <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
           <TextField
@@ -58,6 +65,7 @@ const Profile = () => {
               setUsername(event.target.value);
             }}
           />
+          <Divider variant="middle" />
           <TextField
             id="outlined-basic"
             label="Bio"
@@ -69,7 +77,12 @@ const Profile = () => {
               setBio(event.target.value);
             }}
           />
-          <Button variant="contained" onClick={handleClick} disabled={isUserUpdating}>
+          <Button
+            style={{ marginBottom: '10px', marginTop: '5px' }}
+            variant="contained"
+            onClick={handleClick}
+            disabled={isUserUpdating}
+          >
             Submit changes
           </Button>
         </Box>

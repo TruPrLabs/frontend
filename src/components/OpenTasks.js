@@ -49,27 +49,6 @@ export const OpenTasks = () => {
 
   return (
     <div>
-      <div>
-        <Row>
-          <StyledTextField
-            label="User handle"
-            value={username}
-            onChange={({ target }) => {
-              setUsername(target.value);
-            }}
-          ></StyledTextField>{' '}
-          <Button
-            variant="contained"
-            onClick={async () => {
-              let user = await TwitterService.getId({ username });
-              setUserId(user);
-              console.log(userId);
-            }}
-          >
-            Get user Id
-          </Button>
-        </Row>
-      </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
         <div>
           <Checkbox checked={viewAll} onChange={(event) => setViewAll(event.target.checked)} />

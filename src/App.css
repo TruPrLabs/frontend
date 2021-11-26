@@ -20,6 +20,10 @@
 html {
   background-color: #9f8ad8;
 }
+::-webkit-scrollbar {
+  width: 0; /* Remove scrollbar space */
+  background: transparent; /* Optional: just make scrollbar invisible */
+}
 
 body {
   margin: 0;

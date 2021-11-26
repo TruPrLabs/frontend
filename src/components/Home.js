@@ -94,14 +94,18 @@ const Home = () => {
             container
             className="header"
             alignItems="center"
-            sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: 'paper' }}
+            sx={{ borderBottom: 0, borderColor: 'divider', bgcolor: 'paper' }}
           >
             <div style={{ padding: '0 1em', ...(!bigTopBar && accountInfoToRight && { width: '100%' }) }}>
               <TruPrLogo />
             </div>
             {!accountInfoToRight && accountInfo}
             <Grid item sx={{ flexGrow: 1 }}>
-              <Tabs value={validRoutes.includes(tab) ? tab : '/open-tasks'} onChange={handleChange}>
+              <Tabs
+                value={validRoutes.includes(tab) ? tab : '/open-tasks'}
+                indicatorColor="primary"
+                onChange={handleChange}
+              >
                 <Tab label="Dashboard" component={Link} value={'/'} to={'/'} />
                 <Tab label="Open Tasks" component={Link} value={'/open-tasks'} to={'/open-tasks'} />
                 <Tab label="Create Task" component={Link} value={'/create-task'} to={'/create-task'} />
@@ -127,7 +131,13 @@ const Home = () => {
           <Grid
             container
             className="footer"
-            sx={{ display: 'inline-block', borderTop: 1, borderColor: 'divider', bgcolor: 'paper' }}
+            sx={{
+              display: 'flex',
+              flexDirection: 'row-reverse',
+              borderTop: 1,
+              borderColor: 'divider',
+              bgcolor: 'paper',
+            }}
           >
             <Socials />
           </Grid>
