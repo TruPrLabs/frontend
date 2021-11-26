@@ -21,6 +21,7 @@ import { useState, Fragment, Component } from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { Grid } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import Box from '@mui/material/Box';
 
@@ -66,9 +67,23 @@ const Home = () => {
   const [tab, setTab] = useState(window.location?.pathname || '/');
   const { isAuthenticated } = useMoralis();
 
+  const accountInfoToRight = useMediaQuery('(min-width:657px)');
+  // const accountInfoToRight = false;
+  const bigTopBar = useMediaQuery('(min-width:839px)');
+  const showProfile = useMediaQuery('(min-width:980px)');
+
+  // console.log(accountInfoToRight);
+
   const handleChange = (event, newTab) => {
     setTab(newTab);
   };
+
+  const accountInfo = (
+    <Box style={{ display: 'inline-flex', marginLeft: 'auto' }}>
+      <Chains />
+      <Account />
+    </Box>
+  );
 
   const validRoutes = ['/', '/open-tasks', '/create-task', '/profile'];
   return (
@@ -81,19 +96,21 @@ const Home = () => {
             alignItems="center"
             sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: 'paper' }}
           >
-            <div style={{ padding: '0 1em' }}>
+            <div style={{ padding: '0 1em', ...(!bigTopBar && accountInfoToRight && { width: '100%' }) }}>
               <TruPrLogo />
             </div>
+            {!accountInfoToRight && accountInfo}
             <Grid item sx={{ flexGrow: 1 }}>
               <Tabs value={validRoutes.includes(tab) ? tab : '/open-tasks'} onChange={handleChange}>
                 <Tab label="Dashboard" component={Link} value={'/'} to={'/'} />
                 <Tab label="Open Tasks" component={Link} value={'/open-tasks'} to={'/open-tasks'} />
                 <Tab label="Create Task" component={Link} value={'/create-task'} to={'/create-task'} />
-                {isAuthenticated && <Tab label="Edit profile" component={Link} value={'/profile'} to={'/profile'} />}
+                {isAuthenticated && showProfile && (
+                  <Tab label="Edit profile" component={Link} value={'/profile'} to={'/profile'} />
+                )}
               </Tabs>
             </Grid>
-            <Chains />
-            <Account />
+            {accountInfoToRight && accountInfo}
           </Grid>
 
           <Box component="main" className="background" sx={{ flexGrow: 1, p: 3 }}>

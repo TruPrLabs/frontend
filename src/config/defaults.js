@@ -131,7 +131,9 @@ export const TransactionButton = (props) => {
   if (props.tooltip)
     return (
       <Tooltip title={props.tooltip} placement="top">
-        <span>{button}</span>
+        <Box component="span" {...props}>
+          {button}
+        </Box>
       </Tooltip>
     );
 
@@ -141,7 +143,8 @@ export const TransactionButton = (props) => {
 const StyledStack = styled(Stack)(({ theme }) => ({
   margin: '1em 0',
   padding: '1em 1em',
-  maxWidth: 600,
+  maxWidth: 700,
+  minWidth: 450,
   marginLeft: 'auto',
   marginRight: 'auto',
   textAlign: 'center',
@@ -150,7 +153,7 @@ const StyledStack = styled(Stack)(({ theme }) => ({
 const StyleRow = styled(Stack)(({ theme }) => ({
   // margin: '1em 0',
   // padding: '1em 1em',
-  maxWidth: 600,
+  // maxWidth: 600,
   // marginLeft: 'auto',
   // marginRight: 'auto',
   textAlign: 'center',

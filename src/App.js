@@ -19,6 +19,15 @@ const theme = createTheme({
     disabled: '#9e9e9e',
     subtle: '#747474',
   },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 1040, // default: 900
+      lg: 1510, // default: 1200,
+      xl: 1536,
+    },
+  },
   // palette: {
   //   // mode: 'dark',
   //   // primary: {

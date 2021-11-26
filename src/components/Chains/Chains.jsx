@@ -47,7 +47,7 @@ const menuItems = [
   },*/
   {
     key: '0x2a',
-    value: 'Kovan Testnet',
+    value: 'Kovan',
     icon: <ETHLogo />,
   },
   /*{
@@ -82,7 +82,8 @@ const menuItems = [
   },*/
   {
     key: '0xa869',
-    value: 'Fuji Testnet',
+    // value: 'Fuji Testnet',
+    value: 'Fuji',
     icon: <AvaxLogo />,
   },
 ];
@@ -103,6 +104,8 @@ function Chains() {
         <Select
           style={{ height: '3em' }}
           displayEmpty
+          variant='standard'
+          disableUnderline
           value={selected}
           onChange={handleClick}
         >

@@ -671,6 +671,7 @@ export const CreateTask = () => {
                   loading={isSendingTxTask}
                   disabled={!!formError(2) || !tokenApprovals[tokenSymbol]}
                   onClick={createTask}
+                  style={{ cursor: 'not-allowed' }} //help
                 >
                   Create Task
                 </TransactionButton>

@@ -32,7 +32,7 @@ export const isValidAddress = (address) => {
 };
 
 export const shortenAddress = (address) => {
-  return address.slice(0, 6) + '...' + address.slice(36);
+  return address.slice(0, 6) + '...' + address.slice(38);
 };
 
 export const formatDuration = (delta, none = 'None') => {
@@ -73,6 +73,7 @@ export const getIcon = (icon) => {
       borderRadius: '50%',
       background: '#54b2f5',
       color: 'white',
+      marginLeft: '1em',
     };
   }
   return <DynamicIcon style={{ display: 'inline-block', verticalAlign: 'middle', ...extra }} />;

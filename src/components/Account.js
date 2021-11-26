@@ -26,8 +26,11 @@ const styles = {
     width: 'fit-content',
     cursor: 'pointer',
     border: '1rem',
+    marginBlock: 'auto',
   },
-  text: {},
+  text: {
+    fontFamily: 'Rubik',
+  },
   modal: {
     boxShadow: 24,
     marginTop: 20,
