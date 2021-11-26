@@ -1,3 +1,4 @@
+import { ethers } from 'ethers';
 const ID_TO_CHAINNAME_SHORT = {
   1: 'ethereum',
   3: 'ropsten',
@@ -30,8 +31,11 @@ const blockExplorerURLs = {
   43113: 'https://testnet.snowtrace.io/tx/',
 };
 
-export const getChainName = (chain) => ID_TO_CHAINNAME_SHORT[chain];
-export const getChainNameLong = (chain) => ID_TO_CHAINNAME_LONG[chain];
+export const getChainName = (chainId) =>
+  ID_TO_CHAINNAME_SHORT[chainId] || ID_TO_CHAINNAME_SHORT[ethers.BigNumber.from(chainId).toNumber()];
+
+export const getChainNameLong = (chainId) =>
+  ID_TO_CHAINNAME_LONG[chainId] || ID_TO_CHAINNAME_LONG[ethers.BigNumber.from(chainId).toNumber()];
 
 export const getTransactionLink = (txHash, chainId) => {
   return (blockExplorerURLs[chainId] ?? 'transaction: ') + txHash;

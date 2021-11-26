@@ -10,8 +10,13 @@ import {
   AlertTitle,
   Snackbar,
 } from '@mui/material';
-import { Column, Row, RowLabel, LabelWith, StyledTextField, TransactionButton } from '../config/defaults';
+
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+
 import { Link, useParams } from 'react-router-dom';
+
+import { Column, Row, RowLabel, LabelWith, StyledTextField, TransactionButton } from '../config/defaults';
 
 import { LabelWithText } from '../config/defaults';
 
@@ -20,13 +25,11 @@ import Moralis from 'moralis';
 
 import { Web3Context, TaskContext, WalletContext } from './context/context';
 import { isPositiveInt, isValidAddress, shortenAddress, clamp, getTaskState, taskTimeDeltaInfo } from '../config/utils';
-import { useMoralisDapp } from '../providers/MoralisDappProvider/MoralisDappProvider';
 
 import { getIcon, getReadableDate } from '../config/utils';
 import { Box } from '@mui/system';
 
 import EAService from '../services/ea';
-import { render } from '@testing-library/react';
 
 export const DisplayTask = () => {
   const { id } = useParams();
@@ -47,32 +50,66 @@ export const Task = ({ task, taskId, detailed }) => {
   const { tokenWhitelistAddressToSymbol } = useContext(Web3Context);
   const { updateTasks } = useContext(TaskContext);
 
-  let description, title, username, message, ethAddress;
-  //const { walletAddress } = useMoralisDapp();
+  // console.log('task', task);
+  const description = task.description || 'No description given';
+  const title = task.title || `Task ${taskId}`;
+  const message = task.message || 'No message given';
+  const sponsorUsername = task.sponsorUsername || shortenAddress(task.sponsor);
 
-  const { data } = useMoralisQuery('Task', (query) =>
-    query
-      .exists('taskId')
-      .equalTo('taskId', taskId.toString())
-      .select('description', 'title', 'taskId', 'sponsor', 'message')
-  );
+  // XXX: insert actual url in production
+  const invitationInfo = `Hello 👋\n${sponsorUsername} has invited you to complete ${
+    task.title ? `the task "${task.title}"` : 'a task'
+  } at TruPr. Come have a look!`;
 
-  if (data[0]) {
-    const parsedData = JSON.parse(JSON.stringify(data[0]));
-    description = parsedData.description;
-    title = parsedData.title;
-    username = parsedData.sponsor.username;
-    message = parsedData.message;
-    ethAddress = task.sponsor;
-    // console.log('user name', parsedData.user?.name);
-  }
+  const requirementInfo =
+    'To be eligible for this task, you must have made a Tweet containing the exact promotion message in the given time frame. A message that is even slightly altered will not pass the check.';
 
-  description = description || 'No description given';
-  title = title || `Task ${taskId}`;
-  username = username || shortenAddress(task.sponsor);
-  message = message || 'No message given';
+  const rewardInfo = `The total reward is ...`;
+  // <Text>
+  //   {parseInt(milestone) > 0 && (
+  //     <Fragment>
+  //       The promoter will be rewarded
+  //       {linearRate && (
+  //         <Fragment>
+  //           {' '}
+  //           {metric === 'Time' ? (
+  //             <Fragment>over</Fragment>
+  //           ) : (
+  //             <Fragment>according to their performance measured in</Fragment>
+  //           )}
+  //           <Emphasis>{METRIC_TO_ID[metric]}</Emphasis>.
+  //         </Fragment>
+  //       )}{' '}
+  //     </Fragment>
+  //   )}
+  //   The full amount of <Emphasis>{depositAmount}</Emphasis> <Emphasis>{token.symbol}</Emphasis> is paid out{' '}
+  //   {!(parseInt(milestone) > 0) ? (
+  //     <Fragment>
+  //       <Emphasis>immediately</Emphasis>.
+  //     </Fragment>
+  //   ) : (
+  //     <Fragment>
+  //       {metric === 'Time' ? (
+  //         <Fragment>
+  //           after
+  //           <Emphasis>{formatDuration(milestone)}</Emphasis>
+  //         </Fragment>
+  //       ) : (
+  //         <Fragment>
+  //           upon reaching
+  //           <Emphasis>{(milestone || missing) + ' ' + METRIC_TO_ID[metric]}</Emphasis>.
+  //         </Fragment>
+  //       )}
+  //     </Fragment>
+  //   )}
+  // </Text>
+  // {cliffPeriod > 0 && (
+  //   <Text>
+  //     Any payout will be delayed by <Emphasis>{formatDuration(cliffPeriod)}</Emphasis>.
+  //   </Text>
+  // )}
 
-  if (!task) return <div>loading ...</div>;
+  // if (!task) return <div>loading ...</div>;
 
   const isPublic = task.promoter == 0;
   const now = new Date().getTime();
@@ -139,7 +176,12 @@ export const Task = ({ task, taskId, detailed }) => {
             label={isPublic ? 'Public task' : 'For ' + shortenAddress(task.promoter)}
             tooltip={!isPublic && task.promoter}
           />
-          <LabelWithText label="Created by" text={username} tooltip={task.sponsor} tooltipPlacement="component" />
+          <LabelWithText
+            label="Created by"
+            text={sponsorUsername}
+            tooltip={task.sponsor}
+            tooltipPlacement="component"
+          />
         </Row>
         {getIcon('Twitter')}
       </Row>
@@ -168,23 +210,50 @@ export const Task = ({ task, taskId, detailed }) => {
       </Row>
       <h3>{title ? title : 'Task ' + taskId}</h3>
 
-      <Paper elevation={4} sx={{ padding: '1em' }}>
-        <Row>
-          <LabelWithText
-            placement="top"
-            label="Description"
-            text={detailed ? description : description.slice(0, 90) + ' ...'}
-          />
-        </Row>
-        {!detailed && (
-          <Button component={Link} to={'/task/' + taskId}>
-            view details
-          </Button>
-        )}
-      </Paper>
+      {/* <Row> */}
+      {/* </Row> */}
+      {!detailed && (
+        <Fragment>
+          <Paper elevation={2} sx={{ padding: '1em' }}>
+            <LabelWithText placement="top" label="Description" text={description.slice(0, 90) + ' ...'} />
+            <Button component={Link} to={'/task/' + taskId}>
+              view details
+            </Button>
+          </Paper>
+        </Fragment>
+      )}
 
       {detailed && (
         <Fragment>
+          <Row>
+            <LabelWithText placement="top" label="Task description" text={description} />
+          </Row>
+          {task.description && (
+            <CopyToClipboard text={invitationInfo}>
+              <Button>
+                <ContentCopyIcon /> Copy Task Invitation
+              </Button>
+            </CopyToClipboard>
+          )}
+          <Row>
+            <LabelWithText placement="top" label="Promotion message" text={message} />
+          </Row>
+          {task.message && (
+            <CopyToClipboard text={task.message}>
+              <Button>
+                <ContentCopyIcon /> Copy Message
+              </Button>
+            </CopyToClipboard>
+          )}
+
+          <Row>
+            <LabelWithText placement="top" label="Requirements" text={requirementInfo} />
+          </Row>
+
+          <Row>
+            <LabelWithText placement="top" label="Reward" text={rewardInfo} />
+          </Row>
+
           {isPublic && (
             <Row>
               <RowLabel

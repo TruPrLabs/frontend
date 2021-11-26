@@ -9,7 +9,10 @@ export const contractABI = require('../contracts/TruPr.json').abi;
 // ---------- config -----------
 
 // export const VALID_CHAIN_IDS = ['42', '4'];
-export const VALID_CHAIN_IDS = ['42', '43113'];
+export const VALID_CHAIN_IDS = [
+  '42', // '42',
+  '43113', // '43113'
+];
 
 const contractAddressKovan = '0x70E883b0272602E49Dfb996d7d9808fB8DD83394';
 const contractAddressFuji = '0x92a1805588629eaC0a979A3F8B34492CCB99c880';
@@ -95,7 +98,12 @@ export const oneWeek = 7 * 24 * 60 * 60 * 1000;
 
 export const DEFAULT_CHAIN_ID = VALID_CHAIN_IDS[0];
 
-export const isValidChainId = (chainId) => VALID_CHAIN_IDS.includes(chainId);
+export const isValidChainId = (chainId) => {
+  // console.log('checking valid ', chainId);
+  return VALID_CHAIN_IDS.includes(chainId) || VALID_CHAIN_IDS.includes(ethers.BigNumber.from(chainId).toString());
+};
+// export const isValidChainId = (chainId) =>
+//   VALID_CHAIN_IDS.includes(chainId) || VALID_CHAIN_IDS[ethers.BigNumber.from(chainId).toNumber()];
 
 export const getWhitelistAddressToSymbol = (chainName) => {
   return reverseLookup(buildDictIndexedBy(whitelist, 'symbol', (token) => token.address[chainName]));

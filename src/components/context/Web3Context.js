@@ -32,6 +32,9 @@ export const Web3Connector = ({ children }) => {
     if (isValidChainId(id)) setChainId(id);
   };
 
+  // console.log('dapp chainId', chainId);
+  // console.log('user chainId', userChainId);
+
   const context = {
     contract: contract,
     web3Provider: web3Provider,

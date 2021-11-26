@@ -17,7 +17,13 @@ import Grid from '@mui/material/Grid';
 import { Task } from './Task';
 
 const doFilterByText = (tasks, search) => {
-  return tasks.filter((task) => task.data.includes(search));
+  return tasks.filter(
+    (task) =>
+      task.data.includes(search) ||
+      task.title?.includes(search) ||
+      task.message?.includes(search) ||
+      task.description?.includes(search)
+  );
 };
 
 const doFilterBySort = (tasks, sort) => {
