@@ -41,13 +41,13 @@ const SocialsButton = (props) => (
 const Socials = () => (
   <Fragment>
     <Box>
-      <SocialsButton href="https://github.com/TruPrLabs/">
+      <SocialsButton href="https://chain.link/">
         <ChainlinkLogo style={{ height: logoHeight, width: 'auto' }} />
       </SocialsButton>
-      <SocialsButton href="https://github.com/TruPrLabs/">
+      <SocialsButton href="https://moralis.io/">
         <MoralisLogo style={{ height: logoHeight, width: 'auto' }} />
       </SocialsButton>
-      <SocialsButton href="https://github.com/TruPrLabs/">
+      <SocialsButton href="https://www.avax.network/">
         <AvalancheLogo style={{ height: logoHeight, width: 'auto' }} />
       </SocialsButton>
     </Box>
