@@ -12,6 +12,11 @@ import { useMoralis } from 'react-moralis';
 import { ReactComponent as TwitterLogo } from '../images/twitter.svg';
 import { ReactComponent as DiscordLogo } from '../images/discord.svg';
 import { ReactComponent as GithubLogo } from '../images/github.svg';
+import { ReactComponent as MoralisLogo } from '../images/moralis.svg';
+import { ReactComponent as ChainlinkLogo } from '../images/chainlink.svg';
+import { ReactComponent as AvalancheLogo } from '../images/avalanche.svg';
+import { ReactComponent as TruPrLogo } from '../images/trupr.svg';
+
 import { BrowserRouter, Routes, Route, Link, useParams } from 'react-router-dom';
 
 import Button from '@mui/material/Button';
@@ -25,42 +30,39 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import Box from '@mui/material/Box';
 
-import { ReactComponent as TruPrLogo } from '../images/trupr.svg';
 import { DisplayTask } from './Task';
 
 const logoHeight = 20;
-const logoSpacing = 0;
+
+const SocialsButton = (props) => (
+  <Button variant="text" target="_blank" rel="noreferrer" style={{ minWidth: 20, marginInline: 10 }} {...props} />
+);
 
 const Socials = () => (
-  <div className="socials">
-    <Button
-      variant="text"
-      href="https://github.com/TruPrLabs/"
-      target="_blank"
-      rel="noreferrer"
-      style={{ minWidth: 20, marginInline: logoSpacing }}
-    >
-      <GithubLogo style={{ height: logoHeight, width: 'auto' }} />
-    </Button>
-    <Button
-      variant="text"
-      href="https://twitter.com/TruPrLabs"
-      target="_blank"
-      rel="noreferrer"
-      style={{ minWidth: 20, marginInline: logoSpacing }}
-    >
-      <TwitterLogo style={{ height: logoHeight, width: 'auto' }} />
-    </Button>
-    <Button
-      variant="text"
-      href="https://discord.gg/QeCXAGQJYG"
-      target="_blank"
-      rel="noreferrer"
-      style={{ minWidth: 20, marginInline: logoSpacing }}
-    >
-      <DiscordLogo style={{ height: logoHeight, width: 'auto' }} />
-    </Button>
-  </div>
+  <Fragment>
+    <Box>
+      <SocialsButton href="https://github.com/TruPrLabs/">
+        <ChainlinkLogo style={{ height: logoHeight, width: 'auto' }} />
+      </SocialsButton>
+      <SocialsButton href="https://github.com/TruPrLabs/">
+        <MoralisLogo style={{ height: logoHeight, width: 'auto' }} />
+      </SocialsButton>
+      <SocialsButton href="https://github.com/TruPrLabs/">
+        <AvalancheLogo style={{ height: logoHeight, width: 'auto' }} />
+      </SocialsButton>
+    </Box>
+    <Box>
+      <SocialsButton href="https://github.com/TruPrLabs/">
+        <GithubLogo style={{ height: logoHeight, width: 'auto' }} />
+      </SocialsButton>
+      <SocialsButton href="https://twitter.com/TruPrLabs">
+        <TwitterLogo style={{ height: logoHeight, width: 'auto' }} />
+      </SocialsButton>
+      <SocialsButton href="https://discord.gg/QeCXAGQJYG">
+        <DiscordLogo style={{ height: logoHeight, width: 'auto' }} />
+      </SocialsButton>
+    </Box>
+  </Fragment>
 );
 
 const Home = () => {
@@ -132,11 +134,12 @@ const Home = () => {
             container
             className="footer"
             sx={{
-              display: 'flex',
-              flexDirection: 'row-reverse',
+              display: 'inline-flex',
+              // flexDirection: 'row-reverse',
               borderTop: 1,
               borderColor: 'divider',
               bgcolor: 'paper',
+              justifyContent: 'space-between',
             }}
           >
             <Socials />
