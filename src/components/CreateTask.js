@@ -44,6 +44,7 @@ import { TokenContext, WalletContext, Web3Context } from './context/context';
 
 import { PLATFORM_TO_ID, DURATION_CHOICES, METRIC_TO_ID } from '../config/config';
 import { isPositiveInt, isValidAddress, formatDuration } from '../config/utils';
+import { Box } from '@mui/system';
 
 const steps = ['Task Details', 'Rewards', 'Finalize'];
 
@@ -138,7 +139,7 @@ export const CreateTask = () => {
   const errorForm2 =
     (!isValidEndDate() && 'Invalid end date given') ||
     (!isValidDepositAmount() && 'Invalid deposit amount given') ||
-    (!isPositiveInt(milestone) && 'Invalid milestone given') ||
+    (!isPositiveInt(milestone, true) && 'Invalid milestone given') ||
     '';
 
   const formError = (index) => {
@@ -180,20 +181,114 @@ export const CreateTask = () => {
     data: data,
   });
 
+  const dateDisplayOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric' };
+
   const getTaskReadable = () => ({
     Title: title || '[No title given]',
     Description: description || '[No description given]',
     Platform: platform,
     Assignee: isPublic ? 'Public task (available to anyone)' : promoter,
     ...(!isPublic && { 'Assignee user id': promoterUserId }),
-    'Start date': new Date(startDate),
-    'End date': new Date(endDate),
+    'Start date': new Date(startDate).toLocaleDateString('en-US', dateDisplayOptions),
+    'End date': new Date(endDate).toLocaleDateString('en-US', dateDisplayOptions),
     Milestone: milestone + ' ' + metric,
     Reward: depositAmount + ' ' + token.symbol,
     'Linear payout': linearRate,
     'Cliff period': cliffPeriod ? formatDuration(cliffPeriod) : 'None',
     'Promotion message': message,
   });
+
+  const Emphasis = (props) => (
+    <Box fontWeight="fontWeightMedium" color="red" display="inline" {...props}>
+      {' '}
+      {props.children}{' '}
+    </Box>
+  );
+
+  const Text = (props) => <Typography component="div" style={{ textAlign: 'left' }} {...props} />;
+
+  const getTaskReadableInfo = () => {
+    const missing = '[missing]';
+    return (
+      <Fragment>
+        <LabelWithText label="Title" text={title || '[No title given]'} placement="top" />
+        <LabelWithText label="Description" text={description || '[No description given]'} placement="top" />
+        <Text>
+          The task can{' '}
+          {isPublic ? (
+            <Fragment>
+              be completed by <Emphasis>anyone</Emphasis>.
+            </Fragment>
+          ) : (
+            <Fragment>
+              only be completed by <Emphasis>{platform}</Emphasis> user with id{' '}
+              <Emphasis>{promoterUserId || missing}</Emphasis>.
+            </Fragment>
+          )}
+        </Text>
+        <Text>
+          The task is only counted as valid if completed in the given time frame, starting from
+          <Emphasis>{new Date(startDate).toLocaleDateString('en-US', dateDisplayOptions)}</Emphasis>
+          to
+          <Emphasis>{new Date(endDate).toLocaleDateString('en-US', dateDisplayOptions)}</Emphasis>.
+        </Text>
+        <Text>
+          {parseInt(milestone) > 0 && (
+            <Fragment>
+              The promoter will be rewarded
+              {linearRate && (
+                <Fragment>
+                  {' '}
+                  {metric === 'Time' ? (
+                    <Fragment>over</Fragment>
+                  ) : (
+                    <Fragment>according to their performance measured in</Fragment>
+                  )}
+                  <Emphasis>{METRIC_TO_ID[metric]}</Emphasis>.
+                </Fragment>
+              )}{' '}
+            </Fragment>
+          )}
+          The full amount of <Emphasis>{depositAmount}</Emphasis> <Emphasis>{token.symbol}</Emphasis> is paid out{' '}
+          {!(parseInt(milestone) > 0) ? (
+            <Fragment>
+              <Emphasis>immediately</Emphasis>.
+            </Fragment>
+          ) : (
+            <Fragment>
+              {metric === 'Time' ? (
+                <Fragment>
+                  after
+                  <Emphasis>{formatDuration(milestone)}</Emphasis>
+                </Fragment>
+              ) : (
+                <Fragment>
+                  upon reaching
+                  <Emphasis>{(milestone || missing) + ' ' + METRIC_TO_ID[metric]}</Emphasis>.
+                </Fragment>
+              )}
+            </Fragment>
+          )}
+        </Text>
+        {cliffPeriod > 0 && (
+          <Text>
+            Any payout will be delayed by <Emphasis>{formatDuration(cliffPeriod)}</Emphasis>.
+          </Text>
+        )}
+      </Fragment>
+    );
+
+    // Platform: platform,
+    // Assignee: isPublic ? 'Public task (available to anyone)' : promoter,
+    // ...(!isPublic && { 'Assignee user id': promoterUserId }),
+    // 'Start date': new Date(startDate).toLocaleDateString('en-US', dateDisplayOptions),
+    // 'End date': new Date(endDate).toLocaleDateString('en-US', dateDisplayOptions),
+    // Milestone: milestone + ' ' + metric,
+    // Reward: depositAmount + ' ' + token.symbol,
+    // 'Linear payout': linearRate,
+    // 'Cliff period': cliffPeriod ? formatDuration(cliffPeriod) : 'None',
+    // 'Promotion message': message,
+  };
 
   const createTask = () => {
     const task = getTask();
@@ -231,6 +326,7 @@ export const CreateTask = () => {
           title: title,
           message: message,
           description: description,
+          message: message,
           type: isPublic ? 'Public' : 'Personal',
           user: user,
         };
@@ -516,8 +612,8 @@ export const CreateTask = () => {
                 label="Milestone"
                 // style={{ width: 130, marginRight: '1em' }}
                 value={milestone}
-                error={isTouched('milestone') && !isPositiveInt(milestone)}
-                helperText={isTouched('milestone') && !isPositiveInt(milestone) && 'Must be positive integer'}
+                error={isTouched('milestone') && !isPositiveInt(milestone, true)}
+                helperText={isTouched('milestone') && !isPositiveInt(milestone, true) && 'Must be non-negative integer'}
                 onChange={({ target }) => {
                   touch('milestone');
                   setMilestone(target.value);
@@ -550,22 +646,6 @@ export const CreateTask = () => {
             {/* <TableContainer>
               <Table>
                 <TableBody>
-                  <TableRow>
-                    <TableCell><LabelWithText label="Title" text={title}/></TableCell>
-                    <TableCell><LabelWithText label="Description" text={title}/></TableCell>
-                    <TableCell><LabelWithText label="Title" text={title}/></TableCell>
-                    <TableCell><LabelWithText label="Title" text={title}/></TableCell>
-                    <TableCell><LabelWithText label="Title" text={title}/></TableCell>
-                    <TableCell><LabelWithText label="Title" text={title}/></TableCell>
-                    <TableCell><LabelWithText label="Title" text={title}/></TableCell>
-                    <TableCell><LabelWithText label="Title" text={title}/></TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer> */}
-            <TableContainer>
-              <Table>
-                <TableBody>
                   {Object.entries(getTaskReadable()).map(([key, value]) => (
                     <TableRow key={key}>
                       <TableCell>{key}</TableCell>
@@ -574,7 +654,8 @@ export const CreateTask = () => {
                   ))}
                 </TableBody>
               </Table>
-            </TableContainer>
+            </TableContainer> */}
+            {getTaskReadableInfo()}
             <Stack>
               {!tokenApprovals[tokenSymbol] && (
                 <TransactionButton loading={isSendingTxApprove} onClick={approveToken}>

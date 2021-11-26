@@ -14,9 +14,10 @@ export const copyAddKeyValue = (obj, key, value) => {
   return objCopy;
 };
 
-export const isPositiveInt = (amt) => {
+export const isPositiveInt = (amt, includingZero = false) => {
   try {
-    return ethers.BigNumber.from(amt) > 0;
+    if (includingZero) return ethers.BigNumber.from(amt) >= 0;
+    else return ethers.BigNumber.from(amt) > 0;
   } catch (e) {
     return false;
   }
@@ -34,7 +35,9 @@ export const shortenAddress = (address) => {
   return address.slice(0, 6) + '...' + address.slice(36);
 };
 
-export const formatDuration = (delta) => {
+export const formatDuration = (delta, none = 'None') => {
+  if (parseInt(delta) === 0) return none;
+
   const time = parseInt(delta / 1000, 10);
 
   const days = Math.floor(time / (24 * 60 * 60));
@@ -42,12 +45,10 @@ export const formatDuration = (delta) => {
   const minutes = Math.floor((time - hours * (60 * 60)) / 60);
   const seconds = time - hours * (60 * 60) - minutes * 60;
 
-  if (days > 0) return days + ' day' + (days > 1 ? 's' : '');
-  if (hours > 0) return hours + ' hour' + (hours > 1 ? 's' : '');
-  if (minutes > 0) return minutes + ' minute' + (minutes > 1 ? 's' : '');
-  if (seconds > 0) return seconds + ' second' + (seconds > 1 ? 's' : '');
-
-  return 'None';
+  if (days > 0) return days + ' day' + (days !== 1 ? 's' : '');
+  if (hours > 0) return hours + ' hour' + (hours !== 1 ? 's' : '');
+  if (minutes > 0) return minutes + ' minute' + (minutes !== 1 ? 's' : '');
+  return seconds + ' second' + (seconds !== 1 ? 's' : '');
 };
 
 export const taskTimeDeltaInfo = (task) => {

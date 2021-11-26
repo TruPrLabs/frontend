@@ -42,30 +42,27 @@ export const LabelWith = ({
   tooltip,
   tooltipPlacement = 'label',
   placement = 'left',
+  // align = 'left',
   style = {},
   labelStyle = {},
 }) => {
-  if (variant === 'subtle') labelStyle = { ...labelStyle, color: 'subtle' };
-  if (variant === 'subtle-small') labelStyle = { ...labelStyle, color: 'subtle', fontSize: '14px' };
-  if (placement === 'right') labelStyle.paddingLeft = '0.5em';
-  if (placement === 'left') labelStyle.paddingRight = '0.5em';
-
-  var labelDivStyle = { marginBlock: 'auto', display: 'inline-flex', cursor: 'default' };
-  if (placement === 'top') labelDivStyle.width = '100%';
-
-  var componentStyle = {
-    marginBlock: 'auto',
-    textAlign: 'left', // remove textAlign for top-centered label
-    // width: '100%',
-    // display: 'inline-flex',
+  labelStyle = {
+    ...(variant === 'subtle' && { color: 'subtle' }),
+    ...(variant === 'subtle-small' && { color: 'subtle', fontSize: '14px' }),
+    ...(placement === 'right' && { paddingLeft: '0.5em' }),
+    ...(placement === 'left' && { paddingRight: '0.5em' }),
+    ...labelStyle,
   };
-  const placementBefore = placement === 'top' || placement === 'left';
-
-  if (placement === 'left' || placement === 'right')
-    componentStyle = { ...componentStyle, display: 'inline-flex', justifyContent: 'space-between' };
 
   var labelElement = label && (
-    <div style={labelDivStyle}>
+    <div
+      style={{
+        marginBlock: 'auto',
+        display: 'inline-flex',
+        cursor: 'default',
+        ...(placement === 'top' && { width: '100%' }),
+      }}
+    >
       <Typography sx={{ textAlign: 'left', ...labelStyle }}>{label}</Typography>
 
       {tooltip && tooltipPlacement === '?' && (
@@ -90,24 +87,38 @@ export const LabelWith = ({
       </Tooltip>
     );
 
+  const labelPlacementBefore = placement === 'top' || placement === 'left';
+
   var component = (
-    <Box sx={{ ...componentStyle, ...style }}>
+    <Box
+      sx={{
+        marginBlock: 'auto',
+        textAlign: 'left', // remove textAlign for top-centered label
+        // width: '100%',
+        // display: 'inline-flex',
+        ...((placement === 'left' || placement === 'right') && {
+          display: 'inline-flex',
+          justifyContent: 'space-between',
+        }),
+        ...style,
+      }}
+    >
       <Fragment>
         {/* <div style={{ display: 'inline-flex', marginBlock: 'auto', justifyContent: 'space-between' }}> */}
-        {placementBefore && labelElement}
+        {labelPlacementBefore && labelElement}
         {/* <div style={{ marginBlock: 'auto' }}>{children}</div> */}
         {children}
-        {!placementBefore && labelElement}
+        {!labelPlacementBefore && labelElement}
       </Fragment>
     </Box>
   );
 
-  // if (tooltip && tooltipPlacement === 'component')
-  //   component = (
-  //     <Tooltip placement="top" title={tooltip}>
-  //       {component}
-  //     </Tooltip>
-  //   );
+  if (tooltip && tooltipPlacement === 'component')
+    component = (
+      <Tooltip placement="top" title={tooltip}>
+        {component}
+      </Tooltip>
+    );
 
   return component;
 };

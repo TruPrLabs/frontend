@@ -98,11 +98,7 @@ export const Task = ({ task, taskId, detailed }) => {
         </LabelWith>
         <LabelWithText
           label="Reward"
-          text={
-            task.depositAmount
-              ? task.depositAmount.toString() + ' ' + tokenWhitelistAddressToSymbol[task.erc20Token].toString()
-              : ' '
-          }
+          text={task.depositAmount.toString() + ' ' + tokenWhitelistAddressToSymbol[task.erc20Token].toString()}
         />
       </Row>
       <LinearProgress variant="determinate" value={progress} />

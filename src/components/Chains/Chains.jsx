@@ -90,36 +90,19 @@ const menuItems = [
 function Chains() {
   const { switchNetwork } = useChain();
   const { chainId } = useMoralisDapp();
-  const [selected, setSelected] = useState({});
 
-  useEffect(() => {
-    if (!chainId) return null;
-    const newSelected = menuItems.find((item) => item.key === chainId);
-    setSelected(newSelected);
-    console.log('current chainId: ', chainId);
-  }, [chainId]);
+  const selected = menuItems.find((item) => item.key === chainId)?.key || menuItems[0].key;
 
   const handleClick = (event) => {
-    console.log('Clicked:', event.target.value);
-    setSelected(event.target.value);
     switchNetwork(event.target.value);
   };
 
-  const defaultValue = () => {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        {selected?.icon}
-        <span style={{ marginLeft: '5px' }}>{selected?.value}</span>
-      </div>
-    );
-  };
   return (
     <div>
       <FormControl fullWidth>
         <Select
           style={{ height: '3em' }}
           displayEmpty
-          renderValue={defaultValue}
           value={selected}
           onChange={handleClick}
         >
