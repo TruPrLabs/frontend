@@ -656,28 +656,35 @@ export const CreateTask = () => {
               </Table>
             </TableContainer> */}
             {getTaskReadableInfo()}
-            <Stack>
+            <Fragment>
               {!tokenApprovals[tokenSymbol] && (
-                <TransactionButton loading={isSendingTxApprove} onClick={approveToken}>
-                  Approve Token
-                </TransactionButton>
+                <Row>
+                  <TransactionButton loading={isSendingTxApprove} onClick={approveToken}>
+                    Approve Token
+                  </TransactionButton>
+                </Row>
               )}
               {createdTaskId >= 0 ? (
-                <Button component={Link} to={'/task/' + createdTaskId}>
-                  View Task
-                </Button>
+                <Row>
+                  <Button component={Link} to={'/task/' + createdTaskId}>
+                    View Task
+                  </Button>
+                </Row>
               ) : (
-                <TransactionButton
-                  tooltip={formError(2)}
-                  loading={isSendingTxTask}
-                  disabled={!!formError(2) || !tokenApprovals[tokenSymbol]}
-                  onClick={createTask}
-                  style={{ cursor: 'not-allowed' }} //help
-                >
-                  Create Task
-                </TransactionButton>
+                // Why Stack instead of Row here?
+                <Stack>
+                  <TransactionButton
+                    tooltip={formError(2)}
+                    loading={isSendingTxTask}
+                    disabled={!!formError(2) || !tokenApprovals[tokenSymbol]}
+                    onClick={createTask}
+                    style={{ cursor: 'not-allowed' }} //help
+                  >
+                    Create Task
+                  </TransactionButton>
+                </Stack>
               )}
-            </Stack>
+            </Fragment>
           </>
         )}
         <Row>

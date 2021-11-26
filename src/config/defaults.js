@@ -125,13 +125,19 @@ export const LabelWith = ({
 
 export const TransactionButton = (props) => {
   const button = (
-    <LoadingButton variant="contained" {...props} tooltip={undefined} style={{ width: '100%', ...props.style }} />
+    <LoadingButton
+      variant="contained"
+      {...props}
+      loading={props.loading || undefined}
+      tooltip={undefined}
+      style={{ width: '100%', ...props.style }}
+    />
   );
 
   if (props.tooltip)
     return (
       <Tooltip title={props.tooltip} placement="top">
-        <Box component="span" {...props}>
+        <Box component="span" {...props} loading={undefined}>
           {button}
         </Box>
       </Tooltip>
