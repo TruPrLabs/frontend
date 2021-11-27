@@ -42,7 +42,7 @@ export const TaskConnector = ({ children }) => {
           // const tokenSymbol = tokenWhitelistAddressToSymbol[task.erc20Token].toString();
           const isPublic = task.promoter == 0;
 
-          console.log('data', data);
+          //console.log('data', data);
 
           return {
             ...task,

@@ -21,7 +21,7 @@ const Profile = () => {
       refetchUserData();
     }
 
-    console.log(user.attributes);
+    //console.log(user.attributes);
   }, [username, bio]);
 
   if (isAuthUndefined) {
@@ -61,7 +61,7 @@ const Profile = () => {
             value={username}
             margin="normal"
             onChange={(event) => {
-              console.log(event.target.value);
+              //console.log(event.target.value);
               setUsername(event.target.value);
             }}
           />
@@ -73,7 +73,7 @@ const Profile = () => {
             margin="normal"
             value={bio}
             onChange={(event) => {
-              console.log(event.target.value);
+              //console.log(event.target.value);
               setBio(event.target.value);
             }}
           />

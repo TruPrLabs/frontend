@@ -4,9 +4,9 @@ const baseUrl = 'https://trupr-backend.herokuapp.com/api/EA';
 
 const getEA = async (task, walletAddress, userId) => {
   try {
-    console.log('Taskdata', JSON.parse(JSON.stringify(task.data)));
+    //console.log('Taskdata', JSON.parse(JSON.stringify(task.data)));
     let parsedData = JSON.parse(JSON.stringify(task.data));
-    console.log('Parseddata', parsedData);
+    //console.log('Parseddata', parsedData);
     let taskParams = {
       taskId: task.id,
       promoter: task.promoter,
@@ -22,7 +22,7 @@ const getEA = async (task, walletAddress, userId) => {
       userId: userId || '',
     };
 
-    console.log('Params', taskParams);
+    //console.log('Params', taskParams);
 
     const response = await axios.post(
       baseUrl,
@@ -31,7 +31,7 @@ const getEA = async (task, walletAddress, userId) => {
         headers: { 'Content-Type': 'application/json' },
       }
     );
-    console.log('Response', response);
+    //console.log('Response', response);
     return response;
   } catch (error) {
     console.log(error);
@@ -40,7 +40,7 @@ const getEA = async (task, walletAddress, userId) => {
 
 const getResult = async (task, walletAddress, userId) => {
   let result = await getEA(task, walletAddress, userId);
-  console.log('Result', result);
+  //console.log('Result', result);
   return result.data;
 };
 

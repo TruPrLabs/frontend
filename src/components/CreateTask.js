@@ -196,14 +196,14 @@ export const CreateTask = () => {
     const task = getTask();
 
     console.log('creating task', task);
-    let parsedAmount = ethers.utils.parseUnits(task.depositAmount);
+    let parsedAmount = ethers.utils.parseEther(task.depositAmount);
     console.log('Parsed', parsedAmount, typeof parsedAmount);
 
     signContract
       .createTask(
         task.promoter,
         task.tokenAddress,
-        depositAmount,
+        parsedAmount,
         task.startDate,
         task.endDate,
         task.cliffPeriod,
@@ -682,7 +682,7 @@ export const DevTools = () => {
     const contract = new ethers.Contract(token.address, mockMintInterface);
     contract
       .connect(isConnected ? walletProvider.getSigner() : null)
-      .mint('1000')
+      .mint('1000000000000000000000')
       .then((tx) => {
         setIsMinting(true);
         return tx;

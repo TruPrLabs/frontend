@@ -24,6 +24,7 @@ import { LabelWithText } from '../config/defaults';
 
 import { useMoralisQuery } from 'react-moralis';
 import Moralis from 'moralis';
+import { ethers } from 'ethers';
 
 import { Web3Context, TaskContext, WalletContext } from './context/context';
 import { isPositiveInt, isValidAddress, shortenAddress, clamp, getTaskState, taskTimeDeltaInfo } from '../config/utils';
@@ -88,7 +89,9 @@ export const getReadableTaskSummary = (
 
       <Typography>
         <ReactMarkdown>
-          {`The full amount of **${depositAmount}** **${tokenSymbol}** is paid out to the promoter ` +
+          {`The full amount of **${ethers.utils.formatEther(
+            depositAmount
+          )}** **${tokenSymbol}** is paid out to the promoter ` +
             (!(parseInt(milestone) > 0)
               ? '**immediately** upon completion of the task.'
               : metric === 'Time'
@@ -239,7 +242,11 @@ export const Task = ({ task, taskId, detailed }) => {
         </LabelWith>
         <LabelWithText
           label="Reward"
-          text={task.depositAmount.toString() + ' ' + tokenWhitelistAddressToSymbol[task.erc20Token].toString()}
+          text={
+            ethers.utils.formatEther(task.depositAmount).toString() +
+            ' ' +
+            tokenWhitelistAddressToSymbol[task.erc20Token].toString()
+          }
         />
       </Row>
       <LinearProgress variant="determinate" value={progress} />

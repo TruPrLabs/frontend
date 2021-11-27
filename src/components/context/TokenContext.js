@@ -43,7 +43,7 @@ export const TokenConnector = ({ children }) => {
       Object.entries(tokenWhitelist).forEach(([symbol, token]) => {
         if (!_symbol || _symbol === symbol) {
           token.contract.balanceOf(walletAddress).then((balance) => {
-            setTokenBalances((balances) => copyAddKeyValue(balances, symbol, balance));
+            setTokenBalances((balances) => copyAddKeyValue(balances, symbol, ethers.utils.formatEther(balance)));
           });
         }
       });
