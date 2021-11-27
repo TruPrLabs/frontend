@@ -1,1 +1,2 @@
-web: yarn start
+web: yarn i && yarn start
+server: npm --prefix ./backend install
