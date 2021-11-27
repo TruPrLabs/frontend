@@ -52,7 +52,7 @@ export const RowLabel = (props) => (
 export const LabelWith = ({
   label,
   children,
-  variant = 'subtle-small',
+  variant = 'subtle',
   tooltip,
   tooltipPlacement = 'label',
   placement = 'left',

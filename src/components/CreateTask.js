@@ -184,20 +184,20 @@ export const CreateTask = () => {
 
   const dateDisplayOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric' };
 
-  const getTaskReadable = () => ({
-    Title: title || '[No title given]',
-    Description: description || '[No description given]',
-    Platform: platform,
-    Assignee: isPublic ? 'Public task (available to anyone)' : promoter,
-    ...(!isPublic && { 'Assignee user id': promoterUserId }),
-    'Start date': new Date(startDate).toLocaleDateString('en-US', dateDisplayOptions),
-    'End date': new Date(endDate).toLocaleDateString('en-US', dateDisplayOptions),
-    Milestone: milestone + ' ' + metric,
-    Reward: depositAmount + ' ' + token.symbol,
-    'Linear payout': linearRate,
-    'Cliff period': cliffPeriod ? formatDuration(cliffPeriod) : 'None',
-    'Promotion message': message,
-  });
+  // const getTaskReadable = () => ({
+  //   Title: title || '[No title given]',
+  //   Description: description || '[No description given]',
+  //   Platform: platform,
+  //   Assignee: isPublic ? 'Public task (available to anyone)' : promoter,
+  //   ...(!isPublic && { 'Assignee user id': promoterUserId }),
+  //   'Start date': new Date(startDate).toLocaleDateString('en-US', dateDisplayOptions),
+  //   'End date': new Date(endDate).toLocaleDateString('en-US', dateDisplayOptions),
+  //   Milestone: milestone + ' ' + metric,
+  //   Reward: depositAmount + ' ' + token.symbol,
+  //   'Linear payout': linearRate,
+  //   'Cliff period': cliffPeriod ? formatDuration(cliffPeriod) : 'None',
+  //   'Promotion message': message,
+  // });
 
   const Emphasis = (props) => (
     <Box fontWeight="fontWeightMedium" color="red" display="inline" {...props}>

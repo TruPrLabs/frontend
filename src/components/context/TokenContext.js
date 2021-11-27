@@ -23,7 +23,7 @@ export const TokenConnector = ({ children }) => {
   const updateApprovals = useCallback(
     (_symbol) => {
       if (!walletAddress) return;
-      // console.log('calling updateApprovals');
+      // console.log('calling updateApprovals on chain', chainId);
       Object.entries(tokenWhitelist).forEach(([symbol, token]) => {
         if (!_symbol || _symbol === symbol) {
           token.contract.allowance(walletAddress, contract.address).then((allowance) => {
@@ -39,7 +39,7 @@ export const TokenConnector = ({ children }) => {
   const updateBalances = useCallback(
     (_symbol) => {
       if (!walletAddress) return;
-      // console.log('calling updateBalances');
+      // console.log('calling updateBalances on chain', chainId);
       Object.entries(tokenWhitelist).forEach(([symbol, token]) => {
         if (!_symbol || _symbol === symbol) {
           token.contract.balanceOf(walletAddress).then((balance) => {
