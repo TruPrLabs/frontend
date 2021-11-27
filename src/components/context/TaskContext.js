@@ -18,13 +18,11 @@ const getMoralisTaskData = async () => {
   return results;
 };
 
-window.getMoralisTaskData = getMoralisTaskData;
-
 export const TaskConnector = ({ children }) => {
   // console.log('rendering', 'TaskConnector');
   const [tasks, setTasks] = useState([]);
 
-  const { contract, chainId } = useContext(Web3Context);
+  const { tokenWhitelistAddressToSymbol, contract, chainId } = useContext(Web3Context);
   // const { walletAddress } = useContext(WalletContext);
 
   const updateTasks = () => {
@@ -35,12 +33,32 @@ export const TaskConnector = ({ children }) => {
       .then((_tasks, _pendingRevokeTime) => {
         _tasks = _tasks[0].map((task, id) => {
           // console.log('parsing', task);
+          // console.log('data', );
+          let data = undefined;
+          try {
+            data = JSON.parse(task.data);
+          } catch (e) {}
+
+          // const tokenSymbol = tokenWhitelistAddressToSymbol[task.erc20Token].toString();
+          const isPublic = task.promoter == 0;
+
+          console.log('data', data);
+
           return {
             ...task,
             id: id,
             startDate: task.startDate * 1000,
             endDate: task.endDate * 1000,
-            vestingTerm: task.vestingTerm * 1000,
+            cliffPeriod: task.cliff * 1000,
+            linearRate: task.vesting.linear,
+            // vestingTerm: task.vestingTerm * 1000,
+            isPublic: isPublic,
+            data: data,
+            platform: data?.platform,
+            promoterUserId: data?.userId,
+            metric: data?.metric,
+            milestone: task.vesting.x,
+            mileStoneReward: task.vesting.y,
             // task.state = getTaskState(task);
             // pendingRevokeTime: _pendingRevokeTime[id]
           };

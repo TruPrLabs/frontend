@@ -19,7 +19,10 @@ import { Task } from './Task';
 const doFilterByText = (tasks, search) => {
   return tasks.filter(
     (task) =>
-      task.data.includes(search) ||
+      task.sponsor.includes(search) ||
+      task.promoter.includes(search) ||
+      task.data?.promoterId?.includes(search) ||
+      task.data?.taskHash?.includes(search) ||
       task.title?.includes(search) ||
       task.message?.includes(search) ||
       task.description?.includes(search)

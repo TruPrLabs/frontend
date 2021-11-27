@@ -9,10 +9,12 @@ import {
   Alert,
   AlertTitle,
   Snackbar,
+  Typography,
 } from '@mui/material';
 
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import ReactMarkdown from 'markdown-to-jsx';
 
 import { Link, useParams } from 'react-router-dom';
 
@@ -26,16 +28,82 @@ import Moralis from 'moralis';
 import { Web3Context, TaskContext, WalletContext } from './context/context';
 import { isPositiveInt, isValidAddress, shortenAddress, clamp, getTaskState, taskTimeDeltaInfo } from '../config/utils';
 
-import { getIcon, getReadableDate } from '../config/utils';
+import { formatDuration, getIcon, getReadableDate } from '../config/utils';
 import { Box } from '@mui/system';
 
 import EAService from '../services/ea';
+import { METRIC_TO_ID } from '../config/config';
 
 export const DisplayTask = () => {
   const { id } = useParams();
   const { tasks } = useContext(TaskContext);
   if (!tasks.length) return null;
   return <Task detailed task={tasks[id]} taskId={id} />;
+};
+
+export const getReadableTaskSummary = (
+  startDate,
+  endDate,
+  platform,
+  isPublic,
+  promoterUserId,
+  depositAmount,
+  tokenSymbol,
+  metric,
+  milestone,
+  linearRate,
+  cliffPeriod,
+  missing = '[empty]'
+) => {
+  const dateDisplayOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric' };
+  return (
+    <Fragment>
+      <Typography>
+        <ReactMarkdown>
+          {`The task can ${
+            isPublic
+              ? 'be completed by **anyone**.'
+              : `only be completed by **${platform}** user with id **${promoterUserId || missing}**.`
+          }`}
+        </ReactMarkdown>
+      </Typography>
+
+      <Typography>
+        <ReactMarkdown>
+          {`The task is only counted as valid if completed in the given time frame, starting ` +
+            `from **${new Date(startDate).toLocaleDateString('en-US', dateDisplayOptions)}** ` +
+            `to **${new Date(endDate).toLocaleDateString('en-US', dateDisplayOptions)}**.`}
+        </ReactMarkdown>
+      </Typography>
+
+      {linearRate && (
+        <Typography>
+          <ReactMarkdown>
+            {`The promoter will be rewarded ` +
+              (metric === 'Time' ? 'over ' : `according to their performance measured in `) +
+              `**${METRIC_TO_ID[metric]}**.`}
+          </ReactMarkdown>
+        </Typography>
+      )}
+
+      <Typography>
+        <ReactMarkdown>
+          {`The full amount of **${depositAmount}** **${tokenSymbol}** is paid out to the promoter ` +
+            (!(parseInt(milestone) > 0)
+              ? '**immediately** upon completion of the task.'
+              : metric === 'Time'
+              ? `after **${formatDuration(milestone)}**.`
+              : `upon reaching **${(milestone || missing) + ' ' + METRIC_TO_ID[metric]}**.`)}
+        </ReactMarkdown>
+      </Typography>
+
+      {cliffPeriod > 0 && (
+        <Typography>
+          <ReactMarkdown>{`Any payout will be delayed by **${formatDuration(cliffPeriod)}**.`}</ReactMarkdown>
+        </Typography>
+      )}
+    </Fragment>
+  );
 };
 
 export const Task = ({ task, taskId, detailed }) => {
@@ -47,7 +115,7 @@ export const Task = ({ task, taskId, detailed }) => {
   // const
 
   const { walletAddress, signContract, handleTx, handleTxError } = useContext(WalletContext);
-  const { tokenWhitelistAddressToSymbol } = useContext(Web3Context);
+  const { tokenWhitelist, tokenWhitelistAddressToSymbol } = useContext(Web3Context);
   const { updateTasks } = useContext(TaskContext);
 
   // console.log('task', task);
@@ -56,63 +124,41 @@ export const Task = ({ task, taskId, detailed }) => {
   const message = task.message || 'No message given';
   const sponsorUsername = task.sponsorUsername || shortenAddress(task.sponsor);
 
+  const promoterUsername = task.promoter || shortenAddress(task.promoter);
+
   // XXX: insert actual url in production
-  const invitationInfo = `Hello 👋\n${sponsorUsername} has invited you to complete ${
-    task.title ? `the task "${task.title}"` : 'a task'
-  } at TruPr. Come have a look!`;
+  const truprUrl = 'http://localhost:3000/';
+
+  const invitationInfo =
+    `${sponsorUsername} has invited you to complete ` +
+    `${task.title ? `the task "${task.title}"` : 'a task'} ` +
+    `at TruPr.\nCome have a look!\n${truprUrl}task/${task.id}`;
 
   const requirementInfo =
     'To be eligible for this task, you must have made a Tweet containing the exact promotion message in the given time frame. A message that is even slightly altered will not pass the check.';
 
-  const rewardInfo = `The total reward is ...`;
-  // <Text>
-  //   {parseInt(milestone) > 0 && (
-  //     <Fragment>
-  //       The promoter will be rewarded
-  //       {linearRate && (
-  //         <Fragment>
-  //           {' '}
-  //           {metric === 'Time' ? (
-  //             <Fragment>over</Fragment>
-  //           ) : (
-  //             <Fragment>according to their performance measured in</Fragment>
-  //           )}
-  //           <Emphasis>{METRIC_TO_ID[metric]}</Emphasis>.
-  //         </Fragment>
-  //       )}{' '}
-  //     </Fragment>
-  //   )}
-  //   The full amount of <Emphasis>{depositAmount}</Emphasis> <Emphasis>{token.symbol}</Emphasis> is paid out{' '}
-  //   {!(parseInt(milestone) > 0) ? (
-  //     <Fragment>
-  //       <Emphasis>immediately</Emphasis>.
-  //     </Fragment>
-  //   ) : (
-  //     <Fragment>
-  //       {metric === 'Time' ? (
-  //         <Fragment>
-  //           after
-  //           <Emphasis>{formatDuration(milestone)}</Emphasis>
-  //         </Fragment>
-  //       ) : (
-  //         <Fragment>
-  //           upon reaching
-  //           <Emphasis>{(milestone || missing) + ' ' + METRIC_TO_ID[metric]}</Emphasis>.
-  //         </Fragment>
-  //       )}
-  //     </Fragment>
-  //   )}
-  // </Text>
-  // {cliffPeriod > 0 && (
-  //   <Text>
-  //     Any payout will be delayed by <Emphasis>{formatDuration(cliffPeriod)}</Emphasis>.
-  //   </Text>
-  // )}
-
-  // if (!task) return <div>loading ...</div>;
-
   const isPublic = task.promoter == 0;
   const now = new Date().getTime();
+
+  const tokenSymbol = tokenWhitelistAddressToSymbol[task.erc20Token].toString();
+  // const token = tokenWhitelist[tokenSymbol];
+
+  const taskSummary = getReadableTaskSummary(
+    task.startDate,
+    task.endDate,
+    task.platform,
+    task.isPublic,
+    task.promoterUserId,
+    task.depositAmount,
+    tokenSymbol,
+    task.metric,
+    task.milestone,
+    task.linearRate,
+    task.cliffPeriod,
+    '[invalid]'
+  );
+
+  // if (!task) return <div>loading ...</div>;
 
   const error =
     (task.status !== 1 && 'task has been cancelled') ||
@@ -152,8 +198,9 @@ export const Task = ({ task, taskId, detailed }) => {
 
     if (responseStatus === 1) {
       setSeverity('success');
-      setMsg(`We have found a matching post! Your current score is ${score}, depending on the requirements, you might be
-      eligible for rewards.`);
+      setMsg(
+        `We have found a matching post! Your current score is ${score}, depending on the requirements, you might be eligible for rewards.`
+      );
       setOpen(true);
     }
   };
@@ -169,7 +216,7 @@ export const Task = ({ task, taskId, detailed }) => {
   const taskState = getTaskState(task);
 
   return (
-    <Column style={{ position: 'relative' }}>
+    <Column style={{ position: 'relative', textAlign: 'left' }}>
       <Row>
         <Row>
           <LabelWithText
@@ -208,7 +255,7 @@ export const Task = ({ task, taskId, detailed }) => {
           </Box>
         </Tooltip>
       </Row>
-      <h3>{title ? title : 'Task ' + taskId}</h3>
+      <h2 style={{ textAlign: 'center' }}>{title ? title : 'Task ' + taskId}</h2>
 
       {/* <Row> */}
       {/* </Row> */}
@@ -216,7 +263,7 @@ export const Task = ({ task, taskId, detailed }) => {
         <Fragment>
           <Paper elevation={2} sx={{ padding: '1em' }}>
             <LabelWithText placement="top" label="Description" text={description.slice(0, 90) + ' ...'} />
-            <Button component={Link} to={'/task/' + taskId}>
+            <Button component={Link} to={'/task/' + taskId} style={{ width: '100%' }}>
               view details
             </Button>
           </Paper>
@@ -225,6 +272,8 @@ export const Task = ({ task, taskId, detailed }) => {
 
       {detailed && (
         <Fragment>
+          {/* <h3>Task Description</h3>
+          asldfjsaldfjlskdjf */}
           <Row>
             <LabelWithText placement="top" label="Task description" text={description} />
           </Row>
@@ -247,13 +296,13 @@ export const Task = ({ task, taskId, detailed }) => {
           )}
 
           <Row>
-            <LabelWithText placement="top" label="Requirements" text={requirementInfo} />
+            <LabelWith label="Summary" placement="top">
+              <Box style={{ textAlign: 'left' }}>{taskSummary}</Box>
+            </LabelWith>
+            {/* <LabelWith placement="top" label="Reward">
+              {rewardInfo}
+            </LabelWith> */}
           </Row>
-
-          <Row>
-            <LabelWithText placement="top" label="Reward" text={rewardInfo} />
-          </Row>
-
           {isPublic && (
             <Row>
               <RowLabel

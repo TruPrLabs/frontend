@@ -74,6 +74,8 @@ export const getIcon = (icon) => {
       background: '#54b2f5',
       color: 'white',
       marginLeft: '1em',
+      height: '40px',
+      width: 'auto',
     };
   }
   return <DynamicIcon style={{ display: 'inline-block', verticalAlign: 'middle', ...extra }} />;

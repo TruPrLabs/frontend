@@ -1,5 +1,6 @@
 import './App.css';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { CssBaseline } from '@mui/material';
 import { Web3Connector, WalletConnector, TokenConnector } from './components/context/context';
 import { TaskConnector, TaskContext } from './components/context/TaskContext';
 import Home from './components/Home';
@@ -18,6 +19,17 @@ const theme = createTheme({
     },
     disabled: '#9e9e9e',
     subtle: '#747474',
+    text: {
+      primary: '#222222',
+      // fontWeight: 100,
+      // secondary: '#ff0000',
+    },
+  },
+  typography: {
+    color: '#222222',
+    // color: '#ff0000',
+    // fontFamily: 'Rubik',
+    // fontWeight: 100,
   },
   breakpoints: {
     values: {
@@ -50,6 +62,7 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
       <Web3Connector>
         <TaskConnector>
           <WalletConnector>
