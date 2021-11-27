@@ -1,6 +1,6 @@
 import axios from 'axios';
 const baseUrl = 'https://trupr-backend.herokuapp.com/api/twitter';
-
+//const baseUrl = '/api/twitter';
 const getTwitterId = async (username) => {
   try {
     const request = await axios.get(`${baseUrl}/${username}`, { transformResponse: (data) => data.toString() });

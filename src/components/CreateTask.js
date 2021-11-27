@@ -633,7 +633,7 @@ export const CreateTask = () => {
           <Button disabled={activeStep === 0} style={{ marginRight: 'auto' }} onClick={previousStep}>
             BACK
           </Button>
-          <Button disabled={activeStep === 2} style={{ marginLeft: 'auto' }} onClick={nextStep}>
+          <Button disabled={activeStep === 3} style={{ marginLeft: 'auto' }} onClick={nextStep}>
             NEXT
           </Button>
         </Row>

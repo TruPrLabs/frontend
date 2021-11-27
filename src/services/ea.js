@@ -1,9 +1,12 @@
 import axios from 'axios';
 const baseUrl = 'https://trupr-backend.herokuapp.com/api/EA';
+//const baseUrl = '/api/EA';
 
 const getEA = async (task, walletAddress, userId) => {
   try {
-    let parsedData = JSON.parse(JSON.parse(JSON.stringify(task.data)));
+    console.log('Taskdata', JSON.parse(JSON.stringify(task.data)));
+    let parsedData = JSON.parse(JSON.stringify(task.data));
+    console.log('Parseddata', parsedData);
     let taskParams = {
       taskId: task.id,
       promoter: task.promoter,
@@ -37,6 +40,7 @@ const getEA = async (task, walletAddress, userId) => {
 
 const getResult = async (task, walletAddress, userId) => {
   let result = await getEA(task, walletAddress, userId);
+  console.log('Result', result);
   return result.data;
 };
 

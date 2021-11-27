@@ -181,7 +181,7 @@ export const Task = ({ task, taskId, detailed }) => {
     let result = await EAService.getResult(task, walletAddress, userId);
     console.log('Result', result);
 
-    const responseStatus = result.responseStatus;
+    const responseStatus = result.data.responseStatus;
     const score = result.score;
 
     if (responseStatus === 2) {
