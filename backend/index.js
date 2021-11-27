@@ -164,7 +164,7 @@ const getEAResult = async (req, res) => {
 app.get('/api/twitter/:username', getTwitterId);
 app.post('/api/EA/', getEAResult);
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

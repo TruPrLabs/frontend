@@ -196,12 +196,14 @@ export const CreateTask = () => {
     const task = getTask();
 
     console.log('creating task', task);
+    let parsedAmount = ethers.utils.parseUnits(task.depositAmount);
+    console.log('Parsed', parsedAmount, typeof parsedAmount);
 
     signContract
       .createTask(
         task.promoter,
         task.tokenAddress,
-        task.depositAmount,
+        depositAmount,
         task.startDate,
         task.endDate,
         task.cliffPeriod,
