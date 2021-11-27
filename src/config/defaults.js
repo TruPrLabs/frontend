@@ -109,13 +109,14 @@ export const LabelWith = ({
     <Box
       sx={{
         marginBlock: 'auto',
-        textAlign: 'left', // remove textAlign for top-centered label
+        // textAlign: 'left', // remove textAlign for top-centered label
         // width: '100%',
         // display: 'inline-flex',
         ...((placement === 'left' || placement === 'right') && {
           display: 'inline-flex',
+          flexWrap: 'wrap',
           // justifyContent: 'space-between',
-          justifyContent: 'right',
+          // justifyContent: 'right',
         }),
         ...style,
       }}
@@ -166,7 +167,7 @@ export const TransactionButton = (props) => {
 const StyledStack = styled(Stack)(({ theme }) => ({
   margin: '1em 0',
   padding: '1em 2em',
-  maxWidth: 700,
+  maxWidth: 750,
   minWidth: 450,
   marginLeft: 'auto',
   marginRight: 'auto',
@@ -198,9 +199,10 @@ export const StyledTextField = (props) => (
     variant="outlined"
     {...props}
     sx={{
-      width: '250px',
+      width: '240px',
       height: '3.4em',
       marginBlock: '0.5em',
+      marginLeft: 'auto',
       ...props.sx,
     }}
   />

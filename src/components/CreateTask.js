@@ -540,8 +540,9 @@ export const CreateTask = () => {
             <RowLabel
               label="What is the reward for this task?"
               tooltip="The token and the amount to be paid out to the promoter upon fulfilling the task"
+              // placement="top"
             >
-              <div style={{ display: 'inline-flex' }}>
+              <div style={{ display: 'inline-flex', marginLeft: 'auto' }}>
                 <StyledTextField
                   label="Amount"
                   style={{ width: 130, marginRight: '1em' }}
@@ -594,19 +595,6 @@ export const CreateTask = () => {
             </RowLabel>
 
             <RowLabel
-              label="Should the rewards be given out gradually?"
-              tooltip="The payout will be linearly interpolated between the values."
-            >
-              <LabelWith
-                style={{ width: 250, justifyContent: 'center' }}
-                label="Linear rate"
-                placement="right"
-                variant="subtle"
-              >
-                <Checkbox checked={linearRate} onChange={({ target }) => setLinearRate(target.checked)} />
-              </LabelWith>
-            </RowLabel>
-            <RowLabel
               label="Enter the milestone the promoter must reach."
               tooltip="If this is set to `100` and the metric is `likes`, the promoter will receive their payout upon reaching this milestone."
             >
@@ -622,6 +610,21 @@ export const CreateTask = () => {
                 }}
               />
             </RowLabel>
+
+            <RowLabel
+              label="Should the rewards be given out gradually?"
+              tooltip="The payout will be linearly interpolated between the values."
+            >
+              <LabelWith
+                style={{ width: 250, marginLeft: 'auto', justifyContent: 'center' }}
+                label="Linear rate"
+                placement="right"
+                variant="subtle"
+              >
+                <Checkbox checked={linearRate} onChange={({ target }) => setLinearRate(target.checked)} />
+              </LabelWith>
+            </RowLabel>
+
             <RowLabel
               label="Should there be a cliff-period?"
               tooltip="The cliff-priod determines a delay in the payout. The fulfillment of the task must have passed the cliff-period before the promoter is able to be paid out."
