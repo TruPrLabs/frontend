@@ -15,6 +15,7 @@ export const TokenConnector = ({ children }) => {
   // console.log('rendering', 'TokenConnector');
   const [tokenApprovals, setTokenApprovals] = useState({});
   const [tokenBalances, setTokenBalances] = useState({});
+  const [tokenBalancesFormatted, setTokenBalancesFormatted] = useState({});
 
   const { contract, chainName, chainId, web3Provider, tokenWhitelist, tokenWhitelistAddressToSymbol } =
     useContext(Web3Context);
@@ -43,7 +44,10 @@ export const TokenConnector = ({ children }) => {
       Object.entries(tokenWhitelist).forEach(([symbol, token]) => {
         if (!_symbol || _symbol === symbol) {
           token.contract.balanceOf(walletAddress).then((balance) => {
-            setTokenBalances((balances) => copyAddKeyValue(balances, symbol, ethers.utils.formatEther(balance)));
+            setTokenBalances((balances) => copyAddKeyValue(balances, symbol, balance));
+            setTokenBalancesFormatted((balances) =>
+              copyAddKeyValue(balances, symbol, ethers.utils.formatEther(balance))
+            );
           });
         }
       });
@@ -60,6 +64,7 @@ export const TokenConnector = ({ children }) => {
   const context = {
     tokenApprovals: tokenApprovals,
     tokenBalances: tokenBalances,
+    tokenBalancesFormatted: tokenBalancesFormatted,
     updateApprovals: updateApprovals,
     updateBalances: updateBalances,
   };

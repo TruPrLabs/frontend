@@ -173,6 +173,7 @@ export const Task = ({ task, taskId, detailed }) => {
   const canFulfillTask = !error;
 
   const fulfillTask = (id) => {
+    let userId = isPublic ? userId : task.promoterUserId;
     if (isPublic) signContract.fulfillPublicTask(id, userId).then(handleTx).then(updateTasks).catch(handleTxError);
     else signContract.fulfillTask(id).then(handleTx).then(updateTasks).catch(handleTxError);
   };

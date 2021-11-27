@@ -90,7 +90,7 @@ export const CreateTask = () => {
   const [confetti, setConfetti] = useState(false);
   const [confettiRunning, setConfettiRunning] = useState(false);
 
-  const { tokenApprovals, tokenBalances, updateApprovals } = useContext(TokenContext);
+  const { tokenApprovals, tokenBalances, tokenBalancesFormatted, updateApprovals } = useContext(TokenContext);
   const { handleTx, handleTxError, signContract, walletProvider } = useContext(WalletContext);
   const { tokenWhitelist, contract } = useContext(Web3Context);
 
@@ -119,8 +119,18 @@ export const CreateTask = () => {
   const isValidStartDate = new Date() <= startDate;
   const isValidEndDate = startDate <= endDate;
   const isValidDepositAmount =
-    isPositiveInt(depositAmount) && ethers.utils.parseEther(depositAmount) <= tokenBalances[tokenSymbol];
+    tokenBalances[tokenSymbol] &&
+    isPositiveInt(depositAmount) &&
+    ethers.utils.parseEther(depositAmount).lte(tokenBalances[tokenSymbol]);
   const isValidMilestone = isPositiveInt(milestone, true);
+
+  // console.log(
+  //   'checking ',
+  //   isPositiveInt(depositAmount),
+  //   ethers.utils.parseEther(depositAmount),
+  //   tokenBalances[tokenSymbol],
+  //   ethers.utils.parseEther(depositAmount) <= tokenBalances[tokenSymbol]
+  // );
 
   const errorForm1 = (!isValidMessage && 'Invalid message given') || '';
   const errorForm2 =
@@ -264,7 +274,7 @@ export const CreateTask = () => {
     platform,
     isPublic,
     promoterUserId,
-    depositAmount,
+    isValidDepositAmount && ethers.utils.parseEther(depositAmount),
     tokenSymbol,
     metric,
     milestone,
@@ -484,7 +494,7 @@ export const CreateTask = () => {
                 >
                   {Object.entries(tokenWhitelist).map(([symbol, _token]) => (
                     <MenuItem key={symbol} value={symbol}>
-                      {symbol + ' (balance: ' + tokenBalances[symbol] + ')'}
+                      {symbol + ' (balance: ' + tokenBalancesFormatted[symbol] + ')'}
                     </MenuItem>
                   ))}
                 </StyledTextField>
@@ -596,7 +606,7 @@ export const CreateTask = () => {
               )}
               {createdTaskId >= 0 ? (
                 <Row>
-                  <Button component={Link} to={'/task/' + createdTaskId}>
+                  <Button style={{ width: '100%' }} component={Link} to={'/task/' + createdTaskId}>
                     View Task
                   </Button>
                 </Row>
@@ -661,7 +671,7 @@ export const DevTools = () => {
   const [twitterId, setTwitterId] = useState('');
 
   const { tokenWhitelist } = useContext(Web3Context);
-  const { tokenBalances, updateBalances } = useContext(TokenContext);
+  const { tokenBalances, tokenBalancesFormatted, updateBalances } = useContext(TokenContext);
   const { handleTxError, handleTx, walletProvider, isConnected } = useContext(WalletContext);
 
   const token = tokenWhitelist[tokenSymbol];
@@ -700,7 +710,7 @@ export const DevTools = () => {
       >
         {Object.entries(tokenWhitelist).map(([symbol, _token]) => (
           <MenuItem key={symbol} value={symbol}>
-            {symbol + ' (balance: ' + tokenBalances[symbol] + ')'}
+            {symbol + ' (balance: ' + tokenBalancesFormatted[symbol] + ')'}
           </MenuItem>
         ))}
       </TextField>
