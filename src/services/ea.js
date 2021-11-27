@@ -1,5 +1,5 @@
 import axios from 'axios';
-const baseUrl = '/api/EA';
+const baseUrl = 'https://trupr-backend.herokuapp.com/api/EA';
 
 const getEA = async (task, walletAddress, userId) => {
   try {

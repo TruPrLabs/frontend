@@ -1,5 +1,5 @@
 import axios from 'axios';
-const baseUrl = '/api/twitter';
+const baseUrl = 'https://trupr-backend.herokuapp.com/api/twitter';
 
 const getTwitterId = async (username) => {
   try {
