@@ -89,9 +89,9 @@ export const getReadableTaskSummary = (
 
       <Typography>
         <ReactMarkdown>
-          {`The full amount of **${ethers.utils.formatEther(
-            depositAmount
-          )}** **${tokenSymbol}** is paid out to the promoter ` +
+          {`The full amount of **${
+            (isPositiveInt(depositAmount) && ethers.utils.formatEther(depositAmount)) || missing
+          }** **${tokenSymbol}** is paid out to the promoter ` +
             (!(parseInt(milestone) > 0)
               ? '**immediately** upon completion of the task.'
               : metric === 'Time'

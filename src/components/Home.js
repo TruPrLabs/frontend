@@ -71,7 +71,7 @@ const Home = () => {
 
   const accountInfoToRight = useMediaQuery('(min-width:657px)');
   // const accountInfoToRight = false;
-  const bigTopBar = useMediaQuery('(min-width:839px)');
+  const bigTopBar = useMediaQuery('(min-width:843px)');
   const showProfile = useMediaQuery('(min-width:980px)');
 
   // console.log(accountInfoToRight);

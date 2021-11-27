@@ -42,6 +42,7 @@ body {
     /* radial-gradient(600px circle at -300px 800px, #c1c8e4 99.8%, transparent 100%), */
       radial-gradient(2000px circle at 1200px 2500px, #5680e9 0, transparent 100%);
   background-color: #5ab9ea;
+  background-size: 'contain';
 }
 
 .background {

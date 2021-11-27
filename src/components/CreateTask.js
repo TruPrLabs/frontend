@@ -113,37 +113,25 @@ export const CreateTask = () => {
 
   // parsing functions
 
-  const isValidMessage = () => {
-    return message !== '';
-  };
+  const isValidMessage = message !== '';
+  const isValidPromoter = isValidAddress(promoter) && promoter.toLowerCase() !== walletAddress.toLowerCase();
+  const isValidPromoterUserId = isPositiveInt(promoterUserId);
+  const isValidStartDate = new Date() <= startDate;
+  const isValidEndDate = startDate <= endDate;
+  const isValidDepositAmount =
+    isPositiveInt(depositAmount) && ethers.utils.parseEther(depositAmount) <= tokenBalances[tokenSymbol];
+  const isValidMilestone = isPositiveInt(milestone, true);
 
-  const isValidPromoter = () => {
-    return isValidAddress(promoter) && promoter.toLowerCase() !== walletAddress.toLowerCase();
-  };
-
-  const isValidStartDate = () => {
-    return new Date() <= startDate;
-  };
-
-  const isValidEndDate = () => {
-    return startDate <= endDate;
-  };
-
-  const isValidDepositAmount = () => {
-    return isPositiveInt(depositAmount) && parseInt(depositAmount) <= tokenBalances[tokenSymbol];
-  };
-
-  const errorForm1 = (!isValidMessage() && 'Invalid message given') || '';
-
+  const errorForm1 = (!isValidMessage && 'Invalid message given') || '';
   const errorForm2 =
-    (!isPublic && !isValidPromoter() && 'Invalid promoter address given') ||
-    (!isPublic && !isPositiveInt(promoterUserId) && 'Invalid user id given') ||
+    (!isPublic && !isValidPromoter && 'Invalid promoter address given') ||
+    (!isPublic && !isValidPromoterUserId && 'Invalid user id given') ||
     '';
 
   const errorForm3 =
-    (!isValidEndDate() && 'Invalid end date given') ||
-    (!isValidDepositAmount() && 'Invalid deposit amount given') ||
-    (!isPositiveInt(milestone, true) && 'Invalid milestone given') ||
+    (!isValidEndDate && 'Invalid end date given') ||
+    (!isValidDepositAmount && 'Invalid deposit amount given') ||
+    (!isValidMilestone && 'Invalid milestone given') ||
     '';
 
   const formError = (index) => {
@@ -342,8 +330,8 @@ export const CreateTask = () => {
                 style={{ width: '100%' }}
                 label="Message"
                 value={message}
-                error={isTouched('message') && !isValidMessage()}
-                helperText={isTouched('message') && !isValidMessage() && 'Enter a valid message'}
+                error={isTouched('message') && !isValidMessage}
+                helperText={isTouched('message') && !isValidMessage && 'Enter a valid message'}
                 onChange={({ target }) => {
                   touch('message');
                   setMessage(target.value);
@@ -397,11 +385,11 @@ export const CreateTask = () => {
                   label="Promoter Address"
                   disabled={isPublic}
                   value={isPublic ? '' : promoter}
-                  error={!isPublic && isTouched('promoter') && !isValidPromoter()}
+                  error={!isPublic && isTouched('promoter') && !isValidPromoter}
                   helperText={
                     !isPublic &&
                     isTouched('promoter') &&
-                    !isValidPromoter() &&
+                    !isValidPromoter &&
                     ((!isValidAddress(promoter) && 'Enter a valid address') ||
                       'Address must differ from wallet address')
                   }
@@ -422,9 +410,9 @@ export const CreateTask = () => {
                 label="Promoter User Id"
                 disabled={isPublic}
                 value={isPublic ? '' : promoterUserId}
-                error={!isPublic && isTouched('promoterUserId') && !isPositiveInt(promoterUserId)}
+                error={!isPublic && isTouched('promoterUserId') && !isValidPromoterUserId}
                 helperText={
-                  !isPublic && isTouched('promoterUserId') && !isPositiveInt(promoterUserId) && 'Enter a valid User Id'
+                  !isPublic && isTouched('promoterUserId') && !isValidPromoterUserId & 'Enter a valid User Id'
                 }
                 onChange={({ target }) => {
                   touch('promoterUserId');
@@ -446,8 +434,8 @@ export const CreateTask = () => {
                     touch('startDate');
                     setStartDate(newDate.getTime());
                   }}
-                  error={isTouched('startDate') && !isValidStartDate()}
-                  helperText={isTouched('startDate') && !isValidStartDate() && 'Start date is in the past'}
+                  error={isTouched('startDate') && !isValidStartDate}
+                  helperText={isTouched('startDate') && !isValidStartDate && 'Start date is in the past'}
                 />
                 <DDateTimePicker
                   label="End Date"
@@ -456,8 +444,8 @@ export const CreateTask = () => {
                     touch('endDate');
                     setEndDate(newDate.getTime());
                   }}
-                  error={isTouched('endDate') && !isValidEndDate()}
-                  helperText={isTouched('endDate') && !isValidEndDate() && 'End date must be after start date'}
+                  error={isTouched('endDate') && !isValidEndDate}
+                  helperText={isTouched('endDate') && !isValidEndDate && 'End date must be after start date'}
                 />
               </Row>
             </RowLabel>
@@ -475,11 +463,11 @@ export const CreateTask = () => {
                   label="Amount"
                   style={{ width: 130, marginRight: '1em' }}
                   value={depositAmount}
-                  error={isTouched('depositAmount') && (!isPositiveInt(depositAmount) || !isValidDepositAmount())}
+                  error={isTouched('depositAmount') && (!isPositiveInt(depositAmount) || !isValidDepositAmount)}
                   helperText={
                     isTouched('depositAmount') &&
                     ((!isPositiveInt(depositAmount) && 'Invalid amount') ||
-                      (!isValidDepositAmount() && 'Amount exceeds balance'))
+                      (!isValidDepositAmount && 'Amount exceeds balance'))
                   }
                   onChange={({ target }) => {
                     touch('depositAmount');
@@ -530,8 +518,8 @@ export const CreateTask = () => {
                 label="Milestone"
                 // style={{ width: 130, marginRight: '1em' }}
                 value={milestone}
-                error={isTouched('milestone') && !isPositiveInt(milestone, true)}
-                helperText={isTouched('milestone') && !isPositiveInt(milestone, true) && 'Must be non-negative integer'}
+                error={isTouched('milestone') && !isValidMilestone}
+                helperText={isTouched('milestone') && !isValidMilestone && 'Must be non-negative integer'}
                 onChange={({ target }) => {
                   touch('milestone');
                   setMilestone(target.value);
