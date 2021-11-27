@@ -47,6 +47,7 @@ import { TokenContext, WalletContext, Web3Context } from './context/context';
 import { PLATFORM_TO_ID, DURATION_CHOICES, METRIC_TO_ID } from '../config/config';
 import { isPositiveInt, isValidAddress, formatDuration } from '../config/utils';
 import { Box } from '@mui/system';
+import { getReadableTaskSummary } from './Task';
 
 const steps = ['Description', 'Details', 'Rewards', 'Finalize'];
 
@@ -191,96 +192,6 @@ export const CreateTask = () => {
     data: data,
   });
 
-  const dateDisplayOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric' };
-
-  // const getTaskReadable = () => ({
-  //   Title: title || '[No title given]',
-  //   Description: description || '[No description given]',
-  //   Platform: platform,
-  //   Assignee: isPublic ? 'Public task (available to anyone)' : promoter,
-  //   ...(!isPublic && { 'Assignee user id': promoterUserId }),
-  //   'Start date': new Date(startDate).toLocaleDateString('en-US', dateDisplayOptions),
-  //   'End date': new Date(endDate).toLocaleDateString('en-US', dateDisplayOptions),
-  //   Milestone: milestone + ' ' + metric,
-  //   Reward: depositAmount + ' ' + token.symbol,
-  //   'Linear payout': linearRate,
-  //   'Cliff period': cliffPeriod ? formatDuration(cliffPeriod) : 'None',
-  //   'Promotion message': message,
-  // });
-
-  // const Emphasis = (props) => (
-  //   <Box fontWeight="fontWeightMedium" color="red" display="inline" {...props}>
-  //     {' '}
-  //     {props.children}{' '}
-  //   </Box>
-  // );
-
-  // const Text = (props) => <Typography component="div" style={{ textAlign: 'left' }} {...props} />;
-
-  const getTaskReadableInfo = () => {
-    const missing = '[empty]';
-
-    return (
-      <Fragment>
-        <Typography>
-          <ReactMarkdown>
-            {`The task can ${
-              isPublic
-                ? 'be completed by **anyone**.'
-                : `only be completed by **${platform}** user with id **${promoterUserId || missing}**.`
-            }`}
-          </ReactMarkdown>
-        </Typography>
-
-        <Typography>
-          <ReactMarkdown>
-            {`The task is only counted as valid if completed in the given time frame, starting ` +
-              `from **${new Date(startDate).toLocaleDateString('en-US', dateDisplayOptions)}** ` +
-              `to **${new Date(endDate).toLocaleDateString('en-US', dateDisplayOptions)}**.`}
-          </ReactMarkdown>
-        </Typography>
-
-        {linearRate && (
-          <Typography>
-            <ReactMarkdown>
-              {`The promoter will be rewarded ` +
-                (metric === 'Time' ? 'over ' : `according to their performance measured in `) +
-                `**${METRIC_TO_ID[metric]}**`}
-            </ReactMarkdown>
-          </Typography>
-        )}
-
-        <Typography>
-          <ReactMarkdown>
-            {`The full amount of **${depositAmount}** **${token.symbol}** is paid out to the promoter ` +
-              (!(parseInt(milestone) > 0)
-                ? '**immediately** upon completion of the task.'
-                : metric === 'Time'
-                ? `after **${formatDuration(milestone)}**.`
-                : `upon reaching **${(milestone || missing) + ' ' + METRIC_TO_ID[metric]}**.`)}
-          </ReactMarkdown>
-        </Typography>
-
-        {cliffPeriod > 0 && (
-          <Typography>
-            <ReactMarkdown>{`Any payout will be delayed by ${formatDuration(cliffPeriod)}.`}</ReactMarkdown>
-          </Typography>
-        )}
-      </Fragment>
-    );
-
-    // Platform: platform,
-    // Assignee: isPublic ? 'Public task (available to anyone)' : promoter,
-    // ...(!isPublic && { 'Assignee user id': promoterUserId }),
-    // 'Start date': new Date(startDate).toLocaleDateString('en-US', dateDisplayOptions),
-    // 'End date': new Date(endDate).toLocaleDateString('en-US', dateDisplayOptions),
-    // Milestone: milestone + ' ' + metric,
-    // Reward: depositAmount + ' ' + token.symbol,
-    // 'Linear payout': linearRate,
-    // 'Cliff period': cliffPeriod ? formatDuration(cliffPeriod) : 'None',
-    // 'Promotion message': message,
-  };
-
   const createTask = () => {
     const task = getTask();
 
@@ -356,6 +267,20 @@ export const CreateTask = () => {
   };
 
   window.startParty = startParty;
+
+  const taskSummary = getReadableTaskSummary(
+    startDate,
+    endDate,
+    platform,
+    isPublic,
+    promoterUserId,
+    depositAmount,
+    tokenSymbol,
+    metric,
+    milestone,
+    linearRate,
+    cliffPeriod
+  );
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -669,7 +594,7 @@ export const CreateTask = () => {
             />
             <LabelWithText label="Description" text={description || '[No description given]'} placement="top" />
             <LabelWith label="Summary" placement="top">
-              <Box style={{ textAlign: 'left' }}>{getTaskReadableInfo()}</Box>
+              <Box style={{ textAlign: 'left' }}>{taskSummary}</Box>
             </LabelWith>
             <Fragment>
               {!tokenApprovals[tokenSymbol] && (
