@@ -35,12 +35,19 @@ export const TaskConnector = ({ children }) => {
       .then((_tasks, _pendingRevokeTime) => {
         _tasks = _tasks[0].map((task, id) => {
           // console.log('parsing', task);
+          // console.log('data', );
+          let data = {};
+          try {
+            data = JSON.parse(task.data);
+          } catch (e) {}
+
           return {
             ...task,
             id: id,
             startDate: task.startDate * 1000,
             endDate: task.endDate * 1000,
             vestingTerm: task.vestingTerm * 1000,
+            data: data,
             // task.state = getTaskState(task);
             // pendingRevokeTime: _pendingRevokeTime[id]
           };

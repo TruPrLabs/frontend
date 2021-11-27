@@ -29,8 +29,9 @@ import {
   TransactionButton,
 } from '../config/defaults';
 import { Link } from 'react-router-dom';
+import ReactMarkdown from 'markdown-to-jsx';
 
-import useWindowDimensions from '../hooks/useWindowDimensions';
+// import useWindowDimensions from '../hooks/useWindowDimensions';
 import Confetti from 'react-confetti';
 import { useNewMoralisObject, useMoralis, useMoralisQuery } from 'react-moralis';
 import { useMoralisDapp } from '../providers/MoralisDappProvider/MoralisDappProvider';
@@ -47,7 +48,7 @@ import { PLATFORM_TO_ID, DURATION_CHOICES, METRIC_TO_ID } from '../config/config
 import { isPositiveInt, isValidAddress, formatDuration } from '../config/utils';
 import { Box } from '@mui/system';
 
-const steps = ['Task Details', 'Rewards', 'Finalize'];
+const steps = ['Description', 'Details', 'Rewards', 'Finalize'];
 
 // ================== Create Task ====================
 
@@ -131,13 +132,14 @@ export const CreateTask = () => {
     return isPositiveInt(depositAmount) && parseInt(depositAmount) <= tokenBalances[tokenSymbol];
   };
 
-  const errorForm1 =
-    (!isPublic && !isValidPromoter() && 'Invalid promoter address given') ||
-    (!isPublic && !isPositiveInt(promoterUserId) && 'Invalid user id given') ||
-    (!isValidMessage() && 'Invalid message given') ||
-    '';
+  const errorForm1 = (!isValidMessage() && 'Invalid message given') || '';
 
   const errorForm2 =
+    (!isPublic && !isValidPromoter() && 'Invalid promoter address given') ||
+    (!isPublic && !isPositiveInt(promoterUserId) && 'Invalid user id given') ||
+    '';
+
+  const errorForm3 =
     (!isValidEndDate() && 'Invalid end date given') ||
     (!isValidDepositAmount() && 'Invalid deposit amount given') ||
     (!isPositiveInt(milestone, true) && 'Invalid milestone given') ||
@@ -146,7 +148,14 @@ export const CreateTask = () => {
   const formError = (index) => {
     if (index === 0) return errorForm1;
     if (index === 1) return errorForm2;
-    if (index === 2) return (errorForm1 && 'Step 1: ' + errorForm1) || (errorForm2 && 'Step 2: ' + errorForm2) || '';
+    if (index === 2) return errorForm3;
+    if (index === 3)
+      return (
+        (errorForm1 && 'Step 1: ' + errorForm1) ||
+        (errorForm2 && 'Step 2: ' + errorForm2) ||
+        (errorForm3 && 'Step 3: ' + errorForm3) ||
+        ''
+      );
   };
 
   const approveToken = () => {
@@ -199,82 +208,63 @@ export const CreateTask = () => {
   //   'Promotion message': message,
   // });
 
-  const Emphasis = (props) => (
-    <Box fontWeight="fontWeightMedium" color="red" display="inline" {...props}>
-      {' '}
-      {props.children}{' '}
-    </Box>
-  );
+  // const Emphasis = (props) => (
+  //   <Box fontWeight="fontWeightMedium" color="red" display="inline" {...props}>
+  //     {' '}
+  //     {props.children}{' '}
+  //   </Box>
+  // );
 
-  const Text = (props) => <Typography component="div" style={{ textAlign: 'left' }} {...props} />;
+  // const Text = (props) => <Typography component="div" style={{ textAlign: 'left' }} {...props} />;
 
   const getTaskReadableInfo = () => {
-    const missing = '[missing]';
+    const missing = '[empty]';
+
     return (
       <Fragment>
-        <LabelWithText label="Title" text={title || '[No title given]'} placement="top" />
-        <LabelWithText label="Description" text={description || '[No description given]'} placement="top" />
-        <Text>
-          The task can{' '}
-          {isPublic ? (
-            <Fragment>
-              be completed by <Emphasis>anyone</Emphasis>.
-            </Fragment>
-          ) : (
-            <Fragment>
-              only be completed by <Emphasis>{platform}</Emphasis> user with id{' '}
-              <Emphasis>{promoterUserId || missing}</Emphasis>.
-            </Fragment>
-          )}
-        </Text>
-        <Text>
-          The task is only counted as valid if completed in the given time frame, starting from
-          <Emphasis>{new Date(startDate).toLocaleDateString('en-US', dateDisplayOptions)}</Emphasis>
-          to
-          <Emphasis>{new Date(endDate).toLocaleDateString('en-US', dateDisplayOptions)}</Emphasis>.
-        </Text>
-        <Text>
-          {parseInt(milestone) > 0 && (
-            <Fragment>
-              The promoter will be rewarded
-              {linearRate && (
-                <Fragment>
-                  {' '}
-                  {metric === 'Time' ? (
-                    <Fragment>over</Fragment>
-                  ) : (
-                    <Fragment>according to their performance measured in</Fragment>
-                  )}
-                  <Emphasis>{METRIC_TO_ID[metric]}</Emphasis>.
-                </Fragment>
-              )}{' '}
-            </Fragment>
-          )}
-          The full amount of <Emphasis>{depositAmount}</Emphasis> <Emphasis>{token.symbol}</Emphasis> is paid out{' '}
-          {!(parseInt(milestone) > 0) ? (
-            <Fragment>
-              <Emphasis>immediately</Emphasis>.
-            </Fragment>
-          ) : (
-            <Fragment>
-              {metric === 'Time' ? (
-                <Fragment>
-                  after
-                  <Emphasis>{formatDuration(milestone)}</Emphasis>
-                </Fragment>
-              ) : (
-                <Fragment>
-                  upon reaching
-                  <Emphasis>{(milestone || missing) + ' ' + METRIC_TO_ID[metric]}</Emphasis>.
-                </Fragment>
-              )}
-            </Fragment>
-          )}
-        </Text>
+        <Typography>
+          <ReactMarkdown>
+            {`The task can ${
+              isPublic
+                ? 'be completed by **anyone**.'
+                : `only be completed by **${platform}** user with id **${promoterUserId || missing}**.`
+            }`}
+          </ReactMarkdown>
+        </Typography>
+
+        <Typography>
+          <ReactMarkdown>
+            {`The task is only counted as valid if completed in the given time frame, starting ` +
+              `from **${new Date(startDate).toLocaleDateString('en-US', dateDisplayOptions)}** ` +
+              `to **${new Date(endDate).toLocaleDateString('en-US', dateDisplayOptions)}**.`}
+          </ReactMarkdown>
+        </Typography>
+
+        {linearRate && (
+          <Typography>
+            <ReactMarkdown>
+              {`The promoter will be rewarded ` +
+                (metric === 'Time' ? 'over ' : `according to their performance measured in `) +
+                `**${METRIC_TO_ID[metric]}**`}
+            </ReactMarkdown>
+          </Typography>
+        )}
+
+        <Typography>
+          <ReactMarkdown>
+            {`The full amount of **${depositAmount}** **${token.symbol}** is paid out to the promoter ` +
+              (!(parseInt(milestone) > 0)
+                ? '**immediately** upon completion of the task.'
+                : metric === 'Time'
+                ? `after **${formatDuration(milestone)}**.`
+                : `upon reaching **${(milestone || missing) + ' ' + METRIC_TO_ID[metric]}**.`)}
+          </ReactMarkdown>
+        </Typography>
+
         {cliffPeriod > 0 && (
-          <Text>
-            Any payout will be delayed by <Emphasis>{formatDuration(cliffPeriod)}</Emphasis>.
-          </Text>
+          <Typography>
+            <ReactMarkdown>{`Any payout will be delayed by ${formatDuration(cliffPeriod)}.`}</ReactMarkdown>
+          </Typography>
         )}
       </Fragment>
     );
@@ -377,7 +367,7 @@ export const CreateTask = () => {
               <Tooltip title={formError(index)} placement="top">
                 <StepButton color="inherit" onClick={() => handleStep(index)}>
                   <StepLabel
-                    error={index !== activeStep && index !== 2 && isTouched('step' + index) && !!formError(index)}
+                    error={index !== activeStep && index !== 3 && isTouched('step' + index) && !!formError(index)}
                   >
                     {label}
                   </StepLabel>
@@ -386,11 +376,12 @@ export const CreateTask = () => {
             </Step>
           ))}
         </Stepper>
-        {activeStep == 0 && (
-          <>
-            <RowLabel label="Enter the title of your promotion.">
+        {activeStep === 0 && (
+          <Fragment>
+            <RowLabel label="Enter the title of your promotion." placement="top">
               <StyledTextField
                 label="Title"
+                style={{ width: '100%' }}
                 value={title}
                 onChange={({ target }) => {
                   setTitle(target.value);
@@ -404,7 +395,7 @@ export const CreateTask = () => {
             >
               <StyledTextField
                 multiline
-                style={{ width: '100%', paddingBlock: '0.5em' }}
+                style={{ width: '100%' }}
                 label="Description"
                 value={description}
                 onChange={({ target }) => {
@@ -414,6 +405,28 @@ export const CreateTask = () => {
             </RowLabel>
             {/* </Row> */}
             {/* <Row> */}
+            <RowLabel
+              label="Enter the exact mesage for the promotion."
+              tooltip="The exact message the promoter must relay. The promoter will not be able to complete the task if the message does not match exactly."
+              placement="top"
+            >
+              <StyledTextField
+                multiline
+                style={{ width: '100%' }}
+                label="Message"
+                value={message}
+                error={isTouched('message') && !isValidMessage()}
+                helperText={isTouched('message') && !isValidMessage() && 'Enter a valid message'}
+                onChange={({ target }) => {
+                  touch('message');
+                  setMessage(target.value);
+                }}
+              />
+            </RowLabel>
+          </Fragment>
+        )}
+        {activeStep === 1 && (
+          <Fragment>
             <RowLabel
               label="Choose the platform."
               tooltip="This is the platform the promoter will use to complete the task on."
@@ -438,12 +451,14 @@ export const CreateTask = () => {
               label="Will this be a public or a personalised task?"
               tooltip="Having a personalised task means that only a specific user can fulfill this task. Public means that anyone can fulfill the task and claim the rewards."
             >
-              <div style={{ margin: 'auto' }}>
-                <RowLabel label="Public" placement="right" variant="subtle">
-                  <Checkbox checked={isPublic} onChange={({ target }) => setIsPublic(target.checked)} />
-                </RowLabel>
-                {/* Public */}
-              </div>
+              <LabelWith
+                style={{ width: 250, justifyContent: 'center' }}
+                label="Public"
+                placement="right"
+                variant="subtle"
+              >
+                <Checkbox checked={isPublic} onChange={({ target }) => setIsPublic(target.checked)} />
+              </LabelWith>
             </RowLabel>
             <div style={{}}>
               <RowLabel
@@ -491,58 +506,39 @@ export const CreateTask = () => {
               />
             </RowLabel>
             <RowLabel
-              label="Enter the exact mesage for the promotion."
-              tooltip="The exact message the promoter must relay. The promoter will not be able to complete the task if the message does not match exactly."
-            >
-              <></>
-            </RowLabel>
-            <TextField
-              multiline
-              variant="outlined"
-              label="Message"
-              value={message}
-              error={isTouched('message') && !isValidMessage()}
-              helperText={isTouched('message') && !isValidMessage() && 'Enter a valid message'}
-              onChange={({ target }) => {
-                touch('message');
-                setMessage(target.value);
-              }}
-            />
-          </>
-        )}
-        {activeStep == 1 && (
-          <>
-            <Tooltip title="">
-              <Typography></Typography>
-            </Tooltip>
-            <RowLabel
               label="Enter the start and end date for the promotion."
               tooltip="The time frame the promoter will be given to fulfill his task. If the task is fulfilled in this time window, the promoter will still be able to get paid, even after the end date."
-            />
-            <Row>
-              <DDateTimePicker
-                label="Start Date"
-                value={startDate}
-                onChange={(newDate) => {
-                  touch('startDate');
-                  setStartDate(newDate.getTime());
-                }}
-                error={isTouched('startDate') && !isValidStartDate()}
-                helperText={isTouched('startDate') && !isValidStartDate() && 'Start date is in the past'}
-              />
-              <DDateTimePicker
-                label="End Date"
-                value={endDate}
-                onChange={(newDate) => {
-                  touch('endDate');
-                  setEndDate(newDate.getTime());
-                }}
-                error={isTouched('endDate') && !isValidEndDate()}
-                helperText={isTouched('endDate') && !isValidEndDate() && 'End date must be after start date'}
-              />
-            </Row>
+              placement="top"
+            >
+              <Row style={{ marginTop: '1em' }}>
+                <DDateTimePicker
+                  label="Start Date"
+                  value={startDate}
+                  onChange={(newDate) => {
+                    touch('startDate');
+                    setStartDate(newDate.getTime());
+                  }}
+                  error={isTouched('startDate') && !isValidStartDate()}
+                  helperText={isTouched('startDate') && !isValidStartDate() && 'Start date is in the past'}
+                />
+                <DDateTimePicker
+                  label="End Date"
+                  value={endDate}
+                  onChange={(newDate) => {
+                    touch('endDate');
+                    setEndDate(newDate.getTime());
+                  }}
+                  error={isTouched('endDate') && !isValidEndDate()}
+                  helperText={isTouched('endDate') && !isValidEndDate() && 'End date must be after start date'}
+                />
+              </Row>
+            </RowLabel>
+          </Fragment>
+        )}
+        {activeStep === 2 && (
+          <Fragment>
             <RowLabel
-              label="Enter the rewards set for the promotion."
+              label="What is the reward for this task?"
               tooltip="The token and the amount to be paid out to the promoter upon fulfilling the task"
             >
               <div style={{ display: 'inline-flex' }}>
@@ -585,7 +581,6 @@ export const CreateTask = () => {
                 select
                 label="Metric"
                 value={metric}
-                style={{ width: 100 }}
                 onChange={({ target }) => {
                   setMetric(target.value);
                 }}
@@ -596,11 +591,17 @@ export const CreateTask = () => {
                   </MenuItem>
                 ))}
               </StyledTextField>
+            </RowLabel>
+
+            <RowLabel
+              label="Should the rewards be given out gradually?"
+              tooltip="The payout will be linearly interpolated between the values."
+            >
               <LabelWith
+                style={{ width: 250, justifyContent: 'center' }}
                 label="Linear rate"
                 placement="right"
-                tooltip="The payout will be linearly interpolated between the values."
-                tooltipPlacement="?"
+                variant="subtle"
               >
                 <Checkbox checked={linearRate} onChange={({ target }) => setLinearRate(target.checked)} />
               </LabelWith>
@@ -640,10 +641,10 @@ export const CreateTask = () => {
                 ))}
               </StyledTextField>
             </RowLabel>
-          </>
+          </Fragment>
         )}
-        {activeStep == 2 && (
-          <>
+        {activeStep === 3 && (
+          <Fragment>
             {/* <TableContainer>
               <Table>
                 <TableBody>
@@ -656,7 +657,16 @@ export const CreateTask = () => {
                 </TableBody>
               </Table>
             </TableContainer> */}
-            {getTaskReadableInfo()}
+            <LabelWithText
+              // textStyle={{ fontWeight: 200 }}
+              label="Title"
+              text={title || '[No title given]'}
+              placement="top"
+            />
+            <LabelWithText label="Description" text={description || '[No description given]'} placement="top" />
+            <LabelWith label="Summary" placement="top">
+              <Box style={{ textAlign: 'left' }}>{getTaskReadableInfo()}</Box>
+            </LabelWith>
             <Fragment>
               {!tokenApprovals[tokenSymbol] && (
                 <Row>
@@ -675,18 +685,18 @@ export const CreateTask = () => {
                 // Why Stack instead of Row here?
                 <Stack>
                   <TransactionButton
-                    tooltip={formError(2)}
+                    tooltip={formError(3)}
                     loading={isSendingTxTask}
-                    disabled={!!formError(2) || !tokenApprovals[tokenSymbol]}
+                    disabled={!!formError(3) || !tokenApprovals[tokenSymbol]}
                     onClick={createTask}
-                    style={{ cursor: 'not-allowed' }} //help
+                    // style={{ cursor: 'not-allowed' }} //help
                   >
                     Create Task
                   </TransactionButton>
                 </Stack>
               )}
             </Fragment>
-          </>
+          </Fragment>
         )}
         <Row>
           <Button disabled={activeStep === 0} style={{ marginRight: 'auto' }} onClick={previousStep}>

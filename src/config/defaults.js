@@ -35,6 +35,7 @@ export const LabelWithText = ({
         <Typography
           style={{
             textAlign: 'left',
+            // fontWeight: 200,
             ...textStyle,
           }}
         >
@@ -46,7 +47,7 @@ export const LabelWithText = ({
 };
 
 export const RowLabel = (props) => (
-  <LabelWith tooltipPlacement="?" variant="standard" style={{ width: '100%' }} {...props} />
+  <LabelWith tooltipPlacement="?" variant="standard" style={{ width: '100%', paddingTop: '1em' }} {...props} />
 );
 
 export const LabelWith = ({
@@ -61,6 +62,7 @@ export const LabelWith = ({
   labelStyle = {},
 }) => {
   labelStyle = {
+    // fontWeight: 200,
     ...(variant === 'subtle' && { color: 'subtle' }),
     ...(variant === 'subtle-small' && { color: 'subtle', fontSize: '14px' }),
     ...(placement === 'right' && { paddingLeft: '0.5em' }),
@@ -112,7 +114,8 @@ export const LabelWith = ({
         // display: 'inline-flex',
         ...((placement === 'left' || placement === 'right') && {
           display: 'inline-flex',
-          justifyContent: 'space-between',
+          // justifyContent: 'space-between',
+          justifyContent: 'right',
         }),
         ...style,
       }}
@@ -151,7 +154,7 @@ export const TransactionButton = (props) => {
   if (props.tooltip)
     return (
       <Tooltip title={props.tooltip} placement="top">
-        <Box component="span" {...props} loading={undefined}>
+        <Box component="span" style={{ ...(props.disabled && { cursor: 'not-allowed' }) }} loading={undefined}>
           {button}
         </Box>
       </Tooltip>
@@ -162,7 +165,7 @@ export const TransactionButton = (props) => {
 
 const StyledStack = styled(Stack)(({ theme }) => ({
   margin: '1em 0',
-  padding: '1em 1em',
+  padding: '1em 2em',
   maxWidth: 700,
   minWidth: 450,
   marginLeft: 'auto',
@@ -233,7 +236,7 @@ export const DDateTimePicker = ({ error, helperText, ...props }) => (
     renderInput={(params) => (
       <StyledTextField
         sx={{
-          marginInline: '1em',
+          // marginInline: '0em',
           marginBlock: 'auto',
           ...props.sx,
         }}

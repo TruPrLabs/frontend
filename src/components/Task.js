@@ -9,10 +9,12 @@ import {
   Alert,
   AlertTitle,
   Snackbar,
+  Typography,
 } from '@mui/material';
 
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import ReactMarkdown from 'markdown-to-jsx';
 
 import { Link, useParams } from 'react-router-dom';
 
@@ -57,7 +59,7 @@ export const Task = ({ task, taskId, detailed }) => {
   const sponsorUsername = task.sponsorUsername || shortenAddress(task.sponsor);
 
   // XXX: insert actual url in production
-  const invitationInfo = `Hello 👋\n${sponsorUsername} has invited you to complete ${
+  const invitationInfo = `${sponsorUsername} has invited you to complete ${
     task.title ? `the task "${task.title}"` : 'a task'
   } at TruPr. Come have a look!`;
 
@@ -216,7 +218,7 @@ export const Task = ({ task, taskId, detailed }) => {
         <Fragment>
           <Paper elevation={2} sx={{ padding: '1em' }}>
             <LabelWithText placement="top" label="Description" text={description.slice(0, 90) + ' ...'} />
-            <Button component={Link} to={'/task/' + taskId}>
+            <Button component={Link} to={'/task/' + taskId} style={{ width: '100%' }}>
               view details
             </Button>
           </Paper>
@@ -247,9 +249,6 @@ export const Task = ({ task, taskId, detailed }) => {
               </Button>
             </CopyToClipboard>
           )}
-          <Row>
-            <LabelWithText placement="top" label="Requirements" text={requirementInfo} />
-          </Row>
           <Row>
             <LabelWithText placement="top" label="Reward" text={rewardInfo} />
           </Row>
