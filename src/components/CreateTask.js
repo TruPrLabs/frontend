@@ -452,7 +452,7 @@ export const CreateTask = () => {
               tooltip="Having a personalised task means that only a specific user can fulfill this task. Public means that anyone can fulfill the task and claim the rewards."
             >
               <LabelWith
-                style={{ width: 250, justifyContent: 'center' }}
+                style={{ width: 250, justifyContent: 'center', marginLeft: 'auto' }}
                 label="Public"
                 placement="right"
                 variant="subtle"
@@ -512,6 +512,7 @@ export const CreateTask = () => {
             >
               <Row style={{ marginTop: '1em' }}>
                 <DDateTimePicker
+                  sx={{ marginLeft: 0 }}
                   label="Start Date"
                   value={startDate}
                   onChange={(newDate) => {
