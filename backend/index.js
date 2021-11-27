@@ -28,6 +28,23 @@ const getTwitterId = async (req, res) => {
   }
 };
 
+const getUserHandle = async (req, res) => {
+  const params = {};
+  const endpointURL = `https://api.twitter.com/2/users/${req.params.id}`;
+  try {
+    const response = await needle('get', endpointURL, params, {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log(response.body.data.username);
+    res.send(response.body.data.username);
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
 const getEAResult = async (req, res) => {
   console.log('Res.body', req.body.taskParams);
   //  res.status(200).send(req.body.taskParams);
@@ -162,6 +179,7 @@ const getEAResult = async (req, res) => {
 };
 
 app.get('/api/twitter/:username', getTwitterId);
+app.get('/api/twitter/handle/:id', getUserHandle);
 app.post('/api/EA/', getEAResult);
 
 const PORT = process.env.PORT || 3001;
