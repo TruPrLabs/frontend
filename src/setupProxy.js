@@ -5,6 +5,7 @@ module.exports = function (app) {
     '/api',
     createProxyMiddleware({
       target: 'https://trupr-backend.herokuapp.com/',
+      //target: 'http://localhost:3001',
       changeOrigin: true,
     })
   );

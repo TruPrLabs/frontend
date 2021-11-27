@@ -70,7 +70,7 @@ export const CreateTask = () => {
   const [title, setTitle] = useState('');
 
   const [tokenSymbol, setTokenSymbol] = useState('MOCK');
-  const [depositAmount, setDepositAmount] = useState('');
+  const [depositAmount, setDepositAmount] = useState('0');
   const [startDate, setStartDate] = useState(new Date().getTime());
   const [endDate, setEndDate] = useState(new Date().getTime() + DURATION_CHOICES['One Week']);
   const [metric, setMetric] = useState('Time');
