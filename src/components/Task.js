@@ -168,7 +168,7 @@ export const Task = ({ task, taskId, detailed }) => {
     (now < task.startDate && "task hasn't started") ||
     (task.endDate <= now && 'task has ended') ||
     (!isPublic && walletAddress !== task.promoter && 'task is assigned to someone else') ||
-    (!isPositiveInt(userId) && 'invalid user id');
+    (!isPublic && !isPositiveInt(userId) && 'invalid user id');
 
   const canFulfillTask = !error;
 
