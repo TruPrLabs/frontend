@@ -69,7 +69,7 @@ export const CreateTask = () => {
   const [description, setDescription] = useState('');
   const [title, setTitle] = useState('');
 
-  const [tokenSymbol, setTokenSymbol] = useState('MOCK');
+  const [tokenSymbol, setTokenSymbol] = useState('REACH');
   const [depositAmount, setDepositAmount] = useState('0');
   const [startDate, setStartDate] = useState(new Date().getTime());
   const [endDate, setEndDate] = useState(new Date().getTime() + DURATION_CHOICES['One Week']);
@@ -663,7 +663,7 @@ export const CreateTask = () => {
 const mockMintInterface = ['function mint(uint256 amount)', 'function mintFor(address for, uint256 amount)'];
 
 export const DevTools = () => {
-  const [tokenSymbol, setTokenSymbol] = useState('MOCK');
+  const [tokenSymbol, setTokenSymbol] = useState('REACH');
 
   const [isMinting, setIsMinting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -680,7 +680,7 @@ export const DevTools = () => {
     const contract = new ethers.Contract(token.address, mockMintInterface);
     contract
       .connect(isConnected ? walletProvider.getSigner() : null)
-      .mint('1000000000000000000000')
+      .mint(ethers.utils.parseEther('100'))
       .then((tx) => {
         setIsMinting(true);
         return tx;
@@ -715,7 +715,7 @@ export const DevTools = () => {
         ))}
       </TextField>
       <TransactionButton loading={isMinting} onClick={mint}>
-        Mint 1000
+        Mint 100
       </TransactionButton>
       <h2 style={{ marginTop: '30px', marginBottom: '15px' }}> Twitter tools</h2>
       <TextField

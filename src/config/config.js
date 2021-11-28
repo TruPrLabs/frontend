@@ -14,13 +14,13 @@ export const VALID_CHAIN_IDS = [
   '43113', // '43113'
 ];
 
+const contractAddressFuji = '0xCd46F34A1038b9FE2C80A2957d25c279a9061228';
+const mockToken1Fuji = '0x91B1eabE9E32568A6F0104921daB13bd0fE3D258';
+const mockToken2Fuji = '0xbF9b72510684495c01BE89DAe8347BA23cCA5FB4';
+
 const contractAddressKovan = '0x70E883b0272602E49Dfb996d7d9808fB8DD83394';
-const contractAddressFuji = '0x92a1805588629eaC0a979A3F8B34492CCB99c880';
 const mockToken1Kovan = '0xf912570039238431e13D24d01767d5920C821e58';
 const mockToken2Kovan = '0xD7eD0F05085f48F4a8D5dF0Ac09bB2c3DA7D403c';
-
-const mockToken1Fuji = '0x23e1b431cEE5602024041fDD0D36031f0D0D6e18';
-const mockToken2Fuji = '0x8DCB8B6062281eb7855D1165728D78EB3193Cf3e';
 
 const contractAddress = {
   rinkeby: '0xD22460D669B37b90fB5b1bC1855b2E43084CFb3D',
@@ -29,7 +29,7 @@ const contractAddress = {
 };
 
 const whitelist = [
-  { address: { kovan: mockToken1Kovan, fuji: mockToken1Fuji }, name: 'MockToken', symbol: 'MOCK' },
+  { address: { kovan: mockToken1Kovan, fuji: mockToken1Fuji }, name: 'Reach', symbol: 'REACH' },
   {
     address: { kovan: mockToken2Kovan, fuji: mockToken2Fuji },
     name: 'BananaToken',

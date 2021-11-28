@@ -21,6 +21,10 @@ export const TokenConnector = ({ children }) => {
     useContext(Web3Context);
   const { walletAddress } = useContext(WalletContext);
 
+  window.tokenWhitelist = tokenWhitelist;
+  window.tokenWhitelistAddressToSymbol = tokenWhitelistAddressToSymbol;
+  window.tokenBalances = tokenBalances;
+
   const updateApprovals = useCallback(
     (_symbol) => {
       if (!walletAddress) return;

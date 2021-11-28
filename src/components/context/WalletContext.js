@@ -129,19 +129,23 @@ export const WalletConnector = ({ children }) => {
         updateAccounts(accounts);
       });
       // XXX: moralis is updating this, currently inefficient
-      // window.ethereum.on('chainChanged', (chainId) => {
-      //   setChainId(chainId.toString());
-      // });
+      window.ethereum.on('chainChanged', (chainId) => {
+        setChainId(chainId.toString());
+      });
     }
   }, []);
 
   useEffect(() => {
     if (provider) {
       setSignContract(contract.connect(isConnected ? provider.getSigner() : null));
+      // console.log('calling get net');
       provider
         .getNetwork()
-        .then((network) => setChainId(network?.chainId?.toString()))
-        .catch(() => {});
+        .then((network) => {
+          // console.log('got ', network);
+          setChainId(network?.chainId?.toString());
+        })
+        .catch(console.log);
       // .catch(handleTxError); // fails on fuji network
       provider.send('eth_accounts').then(updateAccounts).catch(handleTxError);
     }
