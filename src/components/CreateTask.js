@@ -422,7 +422,7 @@ export const CreateTask = () => {
                 value={isPublic ? '' : promoterUserId}
                 error={!isPublic && isTouched('promoterUserId') && !isValidPromoterUserId}
                 helperText={
-                  !isPublic && isTouched('promoterUserId') && !isValidPromoterUserId & 'Enter a valid User Id'
+                  !isPublic && isTouched('promoterUserId') && !isValidPromoterUserId && 'Enter a valid User Id'
                 }
                 onChange={({ target }) => {
                   touch('promoterUserId');

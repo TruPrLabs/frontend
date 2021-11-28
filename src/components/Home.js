@@ -89,62 +89,62 @@ const Home = () => {
 
   const validRoutes = ['/', '/open-tasks', '/create-task', '/profile'];
   return (
-    <div className="app">
+    <div className="app" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <BrowserRouter>
-        <Fragment>
-          <Grid
-            container
-            className="header"
-            alignItems="center"
-            sx={{ borderBottom: 0, borderColor: 'divider', bgcolor: 'paper' }}
-          >
-            <div style={{ padding: '0 1em', ...(!bigTopBar && accountInfoToRight && { width: '100%' }) }}>
-              <TruPrLogo />
-            </div>
-            {!accountInfoToRight && accountInfo}
-            <Grid item sx={{ flexGrow: 1 }}>
-              <Tabs
-                value={validRoutes.includes(tab) ? tab : '/open-tasks'}
-                indicatorColor="primary"
-                onChange={handleChange}
-              >
-                <Tab label="Dashboard" component={Link} value={'/'} to={'/'} />
-                <Tab label="Open Tasks" component={Link} value={'/open-tasks'} to={'/open-tasks'} />
-                <Tab label="Create Task" component={Link} value={'/create-task'} to={'/create-task'} />
-                {isAuthenticated && showProfile && (
-                  <Tab label="Edit profile" component={Link} value={'/profile'} to={'/profile'} />
-                )}
-              </Tabs>
-            </Grid>
-            {accountInfoToRight && accountInfo}
+        {/* <Grid container style={{ height: '100vh' }}> */}
+        <Grid
+          container
+          className="header"
+          alignItems="center"
+          sx={{ borderBottom: 0, borderColor: 'divider', bgcolor: 'paper' }}
+        >
+          <div style={{ padding: '0 1em', ...(!bigTopBar && accountInfoToRight && { width: '100%' }) }}>
+            <TruPrLogo />
+          </div>
+          {!accountInfoToRight && accountInfo}
+          <Grid item sx={{ flexGrow: 1 }}>
+            <Tabs
+              value={validRoutes.includes(tab) ? tab : '/open-tasks'}
+              indicatorColor="primary"
+              onChange={handleChange}
+            >
+              <Tab label="Dashboard" component={Link} value={'/'} to={'/'} />
+              <Tab label="Open Tasks" component={Link} value={'/open-tasks'} to={'/open-tasks'} />
+              <Tab label="Create Task" component={Link} value={'/create-task'} to={'/create-task'} />
+              {isAuthenticated && showProfile && (
+                <Tab label="Edit profile" component={Link} value={'/profile'} to={'/profile'} />
+              )}
+            </Tabs>
           </Grid>
+          {accountInfoToRight && accountInfo}
+        </Grid>
 
-          <Box component="main" className="background" sx={{ flexGrow: 1, p: 3 }}>
-            {/* <div className="solar"></div> */}
-            <Routes>
-              <Route path="/" element={<DashBoard />} />
-              <Route path="/open-tasks" element={<OpenTasks />} />
-              <Route path="/create-task" element={<CreateTask />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/task/:id" element={<DisplayTask />} />
-              <Route path="/" exactly element={<renderFor404Routes />} />
-            </Routes>
-          </Box>
-          <Grid
-            container
-            className="footer"
-            sx={{
-              display: 'inline-flex',
-              // flexDirection: 'row-reverse',
-              borderTop: 1,
-              borderColor: 'divider',
-              bgcolor: 'paper',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Socials />
-          </Grid>
-        </Fragment>
+        <Box component="main" className="background" sx={{ flexGrow: 1, p: 3 }}>
+          {/* <div className="solar"></div> */}
+          <Routes>
+            <Route path="/" element={<DashBoard />} />
+            <Route path="/open-tasks" element={<OpenTasks />} />
+            <Route path="/create-task" element={<CreateTask />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/task/:id" element={<DisplayTask />} />
+            <Route path="/" exactly element={<renderFor404Routes />} />
+          </Routes>
+        </Box>
+        <Grid
+          container
+          className="footer"
+          sx={{
+            display: 'inline-flex',
+            // flexDirection: 'row-reverse',
+            borderTop: 1,
+            borderColor: 'divider',
+            bgcolor: 'paper',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Socials />
+        </Grid>
+        {/* </Grid> */}
       </BrowserRouter>
     </div>
   );

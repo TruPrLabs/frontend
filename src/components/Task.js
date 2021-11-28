@@ -54,7 +54,7 @@ export const getReadableTaskSummary = (
   milestone,
   linearRate,
   cliffPeriod,
-  missing = '[empty]'
+  missing = '[invalid]'
 ) => {
   const dateDisplayOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric' };
   return (
@@ -63,59 +63,55 @@ export const getReadableTaskSummary = (
         <ReactMarkdown>
           {`The task can ${
             isPublic
-              ? 'be completed by **anyone**.'
-              : `only be completed by **${platform}** user with id **${promoterUserId || missing}**.`
-          }`}
-        </ReactMarkdown>
-      </Typography>
-
-      <Typography>
-        <ReactMarkdown>
-          {`The task is only counted as valid if completed in the given time frame, starting ` +
+              ? 'be completed by **anyone**. '
+              : `only be completed by **${platform}** user with id **${promoterUserId || missing}**. `
+          }` +
+            `The task is only counted as valid if completed in the given time frame, starting ` +
             `from **${new Date(startDate).toLocaleDateString('en-US', dateDisplayOptions)}** ` +
             `to **${new Date(endDate).toLocaleDateString('en-US', dateDisplayOptions)}**.`}
         </ReactMarkdown>
       </Typography>
 
-      {linearRate && (
-        <Typography>
-          <ReactMarkdown>
-            {`The promoter will be rewarded ` +
-              (metric === 'Time' ? 'over ' : `according to their performance measured in `) +
-              `**${METRIC_TO_ID[metric]}**.`}
-          </ReactMarkdown>
-        </Typography>
-      )}
-
       <Typography>
         <ReactMarkdown>
-          {`The full amount of **${
-            (isPositiveInt(depositAmount) && ethers.utils.formatEther(depositAmount)) || missing
-          }** **${tokenSymbol}** is paid out to the promoter ` +
+          {((linearRate &&
+            `The promoter will be rewarded ${
+              (metric === 'Time' ? 'over ' : `according to their performance measured in `) +
+              `**${METRIC_TO_ID[metric]}**. `
+            }`) ||
+            '') +
+            `The full amount of **${
+              (isPositiveInt(depositAmount) && ethers.utils.formatEther(depositAmount)) || missing
+            }** **${tokenSymbol}** is paid out to the promoter ` +
             (!(parseInt(milestone) > 0)
               ? '**immediately** upon completion of the task.'
               : metric === 'Time'
               ? `after **${formatDuration(milestone)}**.`
-              : `upon reaching **${(milestone || missing) + ' ' + METRIC_TO_ID[metric]}**.`)}
+              : `upon reaching **${(milestone || missing) + ' ' + METRIC_TO_ID[metric]}**.`) +
+            ((cliffPeriod > 0 && ` Any payout will be delayed by **${formatDuration(cliffPeriod)}**.`) || '')}
         </ReactMarkdown>
       </Typography>
 
-      {cliffPeriod > 0 && (
+      {/* {cliffPeriod > 0 && (
         <Typography>
-          <ReactMarkdown>{`Any payout will be delayed by **${formatDuration(cliffPeriod)}**.`}</ReactMarkdown>
+          <ReactMarkdown></ReactMarkdown>
         </Typography>
-      )}
+      )} */}
     </Fragment>
   );
 };
 
+const truprUrl = 'https://www.trupr.xyz/';
+
 export const Task = ({ task, taskId, detailed }) => {
   const [userId, setUserId] = useState('');
   const [userIdTouched, setUserIdTouched] = useState(false);
-  const [severity, setSeverity] = useState('info');
-  const [open, setOpen] = useState(false);
-  const [msg, setMsg] = useState('');
-  // const
+
+  const [alertState, setAlertState] = useState({
+    open: false,
+    message: '',
+    severity: undefined,
+  });
 
   const { walletAddress, signContract, handleTx, handleTxError } = useContext(WalletContext);
   const { tokenWhitelist, tokenWhitelistAddressToSymbol } = useContext(Web3Context);
@@ -130,7 +126,18 @@ export const Task = ({ task, taskId, detailed }) => {
   const promoterUsername = task.promoter || shortenAddress(task.promoter);
 
   // XXX: insert actual url in production
-  const truprUrl = 'http://localhost:3000/';
+
+  const handleAlertClose = (event, reason) => {
+    if (reason !== 'clickaway') setAlertState({ ...alertState, open: false });
+  };
+
+  const alert = (msg, severity) => {
+    setAlertState({
+      open: true,
+      message: msg,
+      severity: severity || 'error',
+    });
+  };
 
   const invitationInfo =
     `${sponsorUsername} has invited you to complete ` +
@@ -168,12 +175,12 @@ export const Task = ({ task, taskId, detailed }) => {
     (now < task.startDate && "task hasn't started") ||
     (task.endDate <= now && 'task has ended') ||
     (!isPublic && walletAddress !== task.promoter && 'task is assigned to someone else') ||
-    (!isPublic && !isPositiveInt(userId) && 'invalid user id');
+    (isPublic && !isPositiveInt(userId) && 'invalid user id');
 
   const canFulfillTask = !error;
 
   const fulfillTask = (id) => {
-    let userId = isPublic ? userId : task.promoterUserId;
+    // let userId = isPublic ? userId : task.promoterUserId;
     if (isPublic) signContract.fulfillPublicTask(id, userId).then(handleTx).then(updateTasks).catch(handleTxError);
     else signContract.fulfillTask(id).then(handleTx).then(updateTasks).catch(handleTxError);
   };
@@ -188,32 +195,16 @@ export const Task = ({ task, taskId, detailed }) => {
     const responseStatus = result.data.responseStatus;
     const score = result.score;
 
-    if (responseStatus === 2) {
-      setSeverity('error');
-      setMsg('There was a mistake in processing your request. Please try again later.');
-      setOpen(true);
-    }
+    if (responseStatus === 2) alert('There was a mistake in processing your request. Please try again later.', 'error');
 
-    if (responseStatus === 0) {
-      setSeverity('warning');
-      setMsg('We have not found any post matching the task requirements.');
-      setOpen(true);
-    }
+    if (responseStatus === 0) alert('We have not found any post matching the task requirements.', 'warning');
 
     if (responseStatus === 1) {
-      setSeverity('success');
-      setMsg(
-        `We have found a matching post! Your current score is ${score}, depending on the requirements, you might be eligible for rewards.`
+      alert(
+        `We have found a matching post! Your current score is ${score}, depending on the requirements, you might be eligible for rewards.`,
+        'success'
       );
-      setOpen(true);
     }
-  };
-
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpen(false);
   };
 
   const progress = clamp(((now - task.startDate) / (task.endDate - task.startDate)) * 100, 0, 100);
@@ -344,9 +335,9 @@ export const Task = ({ task, taskId, detailed }) => {
           <TransactionButton tooltip={error} onClick={() => fulfillTask(taskId)} disabled={!canFulfillTask}>
             Fulfill Task
           </TransactionButton>
-          <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
-            <Alert severity={severity} onClose={handleClose}>
-              {msg}
+          <Snackbar open={alertState.open} autoHideDuration={6000} onClose={handleAlertClose}>
+            <Alert onClose={handleAlertClose} severity={alertState.severity}>
+              {alertState.message}
             </Alert>
           </Snackbar>
         </Fragment>

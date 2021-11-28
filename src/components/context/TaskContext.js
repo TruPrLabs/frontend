@@ -55,7 +55,7 @@ export const TaskConnector = ({ children }) => {
             isPublic: isPublic,
             data: data,
             platform: data?.platform,
-            promoterUserId: data?.userId,
+            userId: data?.userId,
             metric: data?.metric,
             milestone: task.vesting.x,
             mileStoneReward: task.vesting.y,
