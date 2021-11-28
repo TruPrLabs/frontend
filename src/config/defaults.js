@@ -189,7 +189,7 @@ const StyleRow = styled(Stack)(({ theme }) => ({
 }));
 
 export const Column = (props) => (
-  <StyledStack className="glass-solid" sx={{ background: 'white' }} spacing={2} {...props} />
+  <StyledStack className="glass-solid" sx={{ background: 'white', minHeight: 400 }} spacing={2} {...props} />
 );
 
 export const Row = (props) => <StyleRow spacing={4} direction="row" {...props} />;
