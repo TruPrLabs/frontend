@@ -29,16 +29,23 @@ body {
   margin: 0;
   /* background-color: black; */
   /* color: #ffffff; */
-  background: radial-gradient(1200px circle at -500px -500px, #8860d0 50%, transparent 100%),
-    radial-gradient(500px circle at 800px -200px, #8860d0 0, transparent 100%),
-    radial-gradient(1500px circle at 2200px 400px, #8860d0 60%, transparent 95%),
+  background: radial-gradient(1200px circle at -500px -500px, #8860d0 30%, transparent 100%),
+    radial-gradient(600px circle at 1700px 1100px, #84ceeb 0, transparent 100%),
+    radial-gradient(400px circle at 1700px 100px, #c1c8e4 30%, transparent 100%),
+    radial-gradient(500px circle at 1500px 1100px, #8860d0 0, transparent 100%),
     radial-gradient(600px circle at 900px 100px, #c1c8e4 30%, transparent 100%),
-    radial-gradient(400px circle at 800px 500px, #5ab9ea 0, transparent 50%),
-    radial-gradient(400px circle at 700px 600px, #84ceeb 0, transparent 100%),
+    radial-gradient(600px circle at 1200px 0px, #8860d0 0%, transparent 100%),
+    radial-gradient(600px circle at 2200px 400px, #8860d0 20%, transparent 100%),
+    radial-gradient(900px circle at 1800px 500px, #c1c8e4 30%, transparent 100%),
+    radial-gradient(600px circle at 1200px 1200px, #c1c8e4 30%, transparent 100%),
+    radial-gradient(600px circle at 800px 500px, #5ab9ea 0, transparent 50%),
+    radial-gradient(600px circle at 1400px 500px, #5ab9ea 0, transparent 100%),
     radial-gradient(900px circle at 800px 1200px, #8860d0 0, transparent 100%),
     radial-gradient(800px circle at 200px 500px, #84ceeb 0, transparent 30%),
-    radial-gradient(900px circle at 1200px 100px, #c1c8e4 50%, transparent 100%),
-    radial-gradient(1100px circle at 0px 500px, #c1c8e4 0, transparent 100%),
+    /* radial-gradient(900px circle at 1200px 100px, #c1c8e4 50%, transparent 100%), */
+      radial-gradient(1100px circle at 0px 500px, #c1c8e4 0, transparent 100%),
+    radial-gradient(700px circle at 200px 900px, #5680e9 0, transparent 100%),
+    radial-gradient(500px circle at 1200px 500px, #5680e9 0, transparent 100%),
     /* radial-gradient(600px circle at -300px 800px, #c1c8e4 99.8%, transparent 100%), */
       radial-gradient(2000px circle at 1200px 2500px, #5680e9 0, transparent 100%);
   background-color: #5ab9ea;
