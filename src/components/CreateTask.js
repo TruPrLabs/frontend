@@ -306,7 +306,7 @@ export const CreateTask = () => {
             <RowLabel label="Enter the title of your promotion." placement="top">
               <StyledTextField
                 label="Title"
-                style={{ width: '100%' }}
+                style={{ width: '100%', height: 'auto' }}
                 value={title}
                 onChange={({ target }) => {
                   setTitle(target.value);
@@ -320,7 +320,7 @@ export const CreateTask = () => {
             >
               <StyledTextField
                 multiline
-                style={{ width: '100%' }}
+                style={{ width: '100%', height: 'auto' }}
                 label="Description"
                 value={description}
                 onChange={({ target }) => {
@@ -337,7 +337,7 @@ export const CreateTask = () => {
             >
               <StyledTextField
                 multiline
-                style={{ width: '100%' }}
+                style={{ width: '100%', height: 'auto' }}
                 label="Message"
                 value={message}
                 error={isTouched('message') && !isValidMessage}
