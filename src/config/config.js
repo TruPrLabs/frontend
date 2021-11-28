@@ -14,9 +14,13 @@ export const VALID_CHAIN_IDS = [
   '43113', // '43113'
 ];
 
-const contractAddressFuji = '0x75c9e83F219d19fdF67c89e83C9AeC5fA618cE77';
-const mockToken1Fuji = '0xE9C0962E56b723C8DE5602b054aB5F1a6C1a57d7';
-const mockToken2Fuji = '0xCBDfdF0Ba36d1A456d7ceB2cc97CBD809fD5ec85';
+const contractAddressFuji = '0x4De81C6a43Ed7eF386Ab11B13371D1d7860f68a5';
+const mockToken1Fuji = '0x7272da389c22C8034e9C12fD0A4730F24B1bc492';
+const mockToken2Fuji = '0xf445858D4aF94A4122dD987F07CD6d778746332F';
+
+// const contractAddressFuji = '0x75c9e83F219d19fdF67c89e83C9AeC5fA618cE77';
+// const mockToken1Fuji = '0xE9C0962E56b723C8DE5602b054aB5F1a6C1a57d7';
+// const mockToken2Fuji = '0xCBDfdF0Ba36d1A456d7ceB2cc97CBD809fD5ec85';
 
 const contractAddressKovan = '0x70E883b0272602E49Dfb996d7d9808fB8DD83394';
 const mockToken1Kovan = '0xf912570039238431e13D24d01767d5920C821e58';
@@ -96,7 +100,7 @@ export const METRIC_TO_ID = reverseLookup(ID_TO_METRIC);
 
 export const oneWeek = 7 * 24 * 60 * 60 * 1000;
 
-export const DEFAULT_CHAIN_ID = VALID_CHAIN_IDS[0];
+export const DEFAULT_CHAIN_ID = VALID_CHAIN_IDS[1];
 
 export const isValidChainId = (chainId) => {
   // console.log('checking valid ', chainId);
