@@ -180,13 +180,13 @@ export const CreateTask = () => {
   const getTask = () => ({
     promoter: isPublic ? ethers.constants.AddressZero : promoter,
     tokenAddress: token.address,
-    depositAmount: depositAmount,
+    depositAmount: ethers.utils.parseEther(depositAmount),
     startDate: parseInt(startDate.toString() / 1000).toString(),
     endDate: parseInt(endDate.toString() / 1000).toString(),
     cliffPeriod: parseInt(cliffPeriod.toString() / 1000).toString(),
     linearRate: linearRate.toString(),
     xticks: [milestone],
-    yticks: [depositAmount],
+    yticks: [depositAmount].map((amount) => ethers.utils.parseEther(amount)),
     data: data,
   });
 
@@ -194,14 +194,14 @@ export const CreateTask = () => {
     const task = getTask();
 
     console.log('creating task', task);
-    let parsedAmount = ethers.utils.parseEther(task.depositAmount);
-    console.log('Parsed', parsedAmount, typeof parsedAmount);
+    // let parsedAmount = ethers.utils.parseEther(task.depositAmount);
 
     signContract
       .createTask(
         task.promoter,
         task.tokenAddress,
-        parsedAmount,
+        task.depositAmount,
+        // parsedAmount,
         task.startDate,
         task.endDate,
         task.cliffPeriod,

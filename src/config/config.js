@@ -14,9 +14,9 @@ export const VALID_CHAIN_IDS = [
   '43113', // '43113'
 ];
 
-const contractAddressFuji = '0xCd46F34A1038b9FE2C80A2957d25c279a9061228';
-const mockToken1Fuji = '0x91B1eabE9E32568A6F0104921daB13bd0fE3D258';
-const mockToken2Fuji = '0xbF9b72510684495c01BE89DAe8347BA23cCA5FB4';
+const contractAddressFuji = '0x75c9e83F219d19fdF67c89e83C9AeC5fA618cE77';
+const mockToken1Fuji = '0xE9C0962E56b723C8DE5602b054aB5F1a6C1a57d7';
+const mockToken2Fuji = '0xCBDfdF0Ba36d1A456d7ceB2cc97CBD809fD5ec85';
 
 const contractAddressKovan = '0x70E883b0272602E49Dfb996d7d9808fB8DD83394';
 const mockToken1Kovan = '0xf912570039238431e13D24d01767d5920C821e58';
