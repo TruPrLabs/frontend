@@ -158,7 +158,7 @@ export const Task = ({ task, taskId, detailed }) => {
     task.endDate,
     task.platform,
     task.isPublic,
-    task.promoterUserId,
+    task.userId,
     task.depositAmount,
     tokenSymbol,
     task.metric,
