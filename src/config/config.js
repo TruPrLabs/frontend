@@ -14,12 +14,9 @@ export const VALID_CHAIN_IDS = [
   '43113', // '43113'
 ];
 
-// const contractAddressFuji = '0x4De81C6a43Ed7eF386Ab11B13371D1d7860f68a5';
-// const mockToken1Fuji = '0x7272da389c22C8034e9C12fD0A4730F24B1bc492';
-// const mockToken2Fuji = '0xf445858D4aF94A4122dD987F07CD6d778746332F';
-const contractAddressFuji = '0x0c4497C76978E851Ae04Ccad0C2D4018606bB8D6';
-const mockToken1Fuji = '0xbd1FB312953544b5781601048f2088C4B02DDdDb';
-const mockToken2Fuji = '0x779C7d959dab9F0A96652C5c018d193B9E08303B';
+const contractAddressFuji = '0x578e6bAb6E8a0d5CB589b1D91a8265Ca4879BAe3';
+const mockToken1Fuji = '0x6ec66Dd0B40EbA004416F3A797e698E38a2A63e5';
+const mockToken2Fuji = '0xf6921F27d4156038D4B2DF11d5f29e40980f4b3C';
 
 // const contractAddressFuji = '0x75c9e83F219d19fdF67c89e83C9AeC5fA618cE77';
 // const mockToken1Fuji = '0xE9C0962E56b723C8DE5602b054aB5F1a6C1a57d7';
